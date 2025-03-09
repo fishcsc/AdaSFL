@@ -1,6 +1,6 @@
 {
   "scripts_path": {
-    "local": "/data1/scchen/AdaSFL_try/AdaSFL/client_module/",
+    "local": "/data0/scchen/AdaSFL/client_module/",
     "remote": "/data/scchen"
   },
   "worker_config_list": [

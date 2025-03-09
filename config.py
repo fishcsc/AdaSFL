@@ -4,7 +4,9 @@ import paramiko
 from scp import SCPClient
 from torch.utils.tensorboard import SummaryWriter
 from comm_utils import *
-
+import socket
+import traceback
+import errno
 
 class ClientAction:
     LOCAL_TRAINING = "local_training"
@@ -59,18 +61,24 @@ class Worker:
         print("start process at ", self.user_name, ": ", self.config.client_ip)
 
     def __start_local_worker_process(self):
-        python_path = '/home/amax/anaconda3/envs/pytorch/bin/python'
+        python_path = '/home/amax/miniconda3/envs/pytorch/bin/python'
         os.system('cd ' + os.getcwd() + '/client_module' + ';nohup  ' + python_path + ' -u client.py --master_ip ' 
                      + self.client_ip + ' --master_port ' + str(self.master_port)  + ' --idx ' + str(self.idx) 
                      + ' > client_' + str(self.idx) + '_log.txt 2>&1 &')
 
-        print("start process at ", self.user_name, ": ", self.client_ip)
+        print("start process at ", self.user_name, ": ", self.client_ip, ": ", self.master_port)
 
     def send_data(self, data):
         send_data_socket(data, self.socket)
 
     def send_init_config(self):
-        self.socket = connect_send_socket(self.client_ip, self.master_port)
+        try:
+            self.socket = socket.create_connection(
+                (self.client_ip, self.master_port), timeout=5
+            )
+            print(f"✅ {self.user_name} connected to {self.client_ip}:{self.master_port}")
+        except Exception as e:
+            print(f"❌ {self.user_name} connection failed: {str(e)}")
         send_data_socket(self.config, self.socket)
 
     def get_config(self):

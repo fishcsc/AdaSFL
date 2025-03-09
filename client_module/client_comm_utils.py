@@ -44,19 +44,31 @@ def connect_get_socket(listen_ip, listen_port):
     return conn
 
 def send_data_socket(data, s):
-    data = pickle.dumps(data)
-    s.sendall(struct.pack(">I", len(data)))
-    s.sendall(data)
+    try:
+        data = pickle.dumps(data)
+        s.sendall(struct.pack(">I", len(data)))
+        s.sendall(data)
+    except Exception as e:
+        print(f"发送数据失败: {str(e)}")
 
 def get_data_socket(conn):
-    data_len = struct.unpack(">I", conn.recv(4))[0]
-    '''
     try:
-        data_len = struct.unpack(">I", conn.recv(4))[0]
-    except:
+        header = conn.recv(4)
+        if not header or len(header) != 4:
+            print("❌ 接收头部数据失败")
+            return None
+            
+        data_len = struct.unpack(">I", header)[0]
+        data = conn.recv(data_len, socket.MSG_WAITALL)
+        
+        if not data or len(data) != data_len:
+            print("❌ 接收数据不完整")
+            return None
+            
+        return pickle.loads(data)
+    except socket.timeout:
+        print("❌ 数据接收超时")
         return None
-    '''
-    data = conn.recv(data_len, socket.MSG_WAITALL)
-    recv_data = pickle.loads(data)
-
-    return recv_data
+    except Exception as e:
+        print(f"❌ 数据接收失败: {str(e)}")
+        return None

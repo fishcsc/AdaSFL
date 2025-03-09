@@ -68,11 +68,14 @@ def main():
 
     common_config.para_nums=init_para.nelement()
     model_size = init_para.nelement() * 4 / 1024 / 1024
+    print("Model: {}".format(common_config.model_type))
+    print("客户端:")
     print("para num: {}".format(common_config.para_nums))
-    print("Model Size: {} MB".format(model_size))
+    print("Model Size: {} MB".format(model_size))    
 
     init_para1 = torch.nn.utils.parameters_to_vector(global_model.parameters())
     model_size = init_para1.nelement() * 4 / 1024 / 1024
+    print("服务器:")
     print("para num: {}".format(common_config.para_nums))
     print("Model Size: {} MB".format(model_size))
     # create workers
@@ -88,7 +91,8 @@ def main():
                     user_name=worker_config['user_name'],
                     pass_wd=worker_config['pass_wd'],
                     remote_scripts_path=workers_config['scripts_path']['remote'],
-                    master_port=master_listen_port_base+worker_idx,
+                    # master_port=master_listen_port_base+worker_idx,
+                    master_port=worker_config['master_port'],
                     location='local'
                     )
         )
@@ -139,6 +143,7 @@ def main():
     for epoch_idx in range(1, 1+common_config.epoch):
 
         communication_parallel(worker_list, action="send_para", data=local_steps)
+        print("send_para done")
 
         if epoch_idx > 1 and epoch_idx % 1 == 0:
             epoch_lr = max((args.decay_rate * args.lr, args.min_lr))
@@ -196,24 +201,32 @@ def random_RC(num):
     return computation_resource,bandwith_resourc
 
 def update_E(worker_list):
-    local_steps=random.randint(40,60)
-    compre_ratio=local_steps/200.0
-    train_time_list=[0.8,0.7,0.8,0.6,0.8,0.7,0.6,0.8,0.7,0.6]
-    send_time_list=[0.8,0.7,0.8,0.6,0.8,0.7,0.6,0.8,0.7,0.6]
-    min_train_time=10000.0
-    min_train_time_idx=1
-    min_send_time=10000.0
-    min_send_time_idx=1
-    sum_local_steps=0
+    local_steps = random.randint(40, 60)
+    compre_ratio = local_steps / 200.0
+    train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
+    send_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
+    min_train_time = float('inf')
+    min_train_time_idx = -1
+    min_send_time = float('inf')
+    min_send_time_idx = -1
+    sum_local_steps = 0
+
+    # Ensure no division by zero
+    epsilon = 1e-6
+
     for worker in worker_list:
-        train_time_list[worker.idx]=worker.config.train_time
-        send_time_list[worker.idx]=worker.config.send_time
-        if train_time_list[worker.idx]<min_train_time:
-            min_train_time=train_time_list[worker.idx]
-            min_train_time_idx=worker.idx
-        if send_time_list[worker.idx]<min_send_time:
-            min_send_time=send_time_list[worker.idx]
-            min_send_time_idx=worker.idx
+        train_time = max(worker.config.train_time, epsilon)
+        send_time = max(worker.config.send_time, epsilon)
+        train_time_list[worker.idx] = train_time
+        send_time_list[worker.idx] = send_time
+
+        if train_time < min_train_time:
+            min_train_time = train_time
+            min_train_time_idx = worker.idx
+        if send_time < min_send_time:
+            min_send_time = send_time
+            min_send_time_idx = worker.idx
+
     for worker in worker_list:
         worker.config.batch_size=int((train_time_list[min_train_time_idx]/train_time_list[worker.idx])*local_steps)
         worker.config.compre_ratio=(train_time_list[min_train_time_idx]/train_time_list[worker.idx])*compre_ratio
@@ -225,7 +238,7 @@ def update_E(worker_list):
         # compre_ratio_list[worker.idx]=worker.config.compre_ratio
         sum_local_steps=sum_local_steps+worker.config.batch_size
     for worker in worker_list:
-        worker.config.average_weight=(1.0*worker.config.batch_size)/(sum_local_steps)
+        worker.config.average_weight = (1.0 * worker.config.batch_size) / sum_local_steps
         
     max_train_time=max(train_time_list)
     max_send_time=max(send_time_list)
@@ -235,25 +248,33 @@ def update_E(worker_list):
     #total_time=min_train_time*local_steps/2.0
     return local_steps,total_time
 
-def update_B(worker_list,batch_size_list,compre_ratio_list):
-    batch=128
-    compre_ratio=batch/200.0
-    train_time_list=[0.8,0.7,0.8,0.6,0.8,0.7,0.6,0.8,0.7,0.6]
-    send_time_list=[0.8,0.7,0.8,0.6,0.8,0.7,0.6,0.8,0.7,0.6]
-    min_train_time=10000.0
-    min_train_time_idx=1
-    min_send_time=10000.0
-    min_send_time_idx=1
-    sum_local_steps=0
+def update_B(worker_list, batch_size_list, compre_ratio_list):
+    batch = 128
+    compre_ratio = batch / 200.0
+    train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
+    send_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
+    min_train_time = float('inf')
+    min_train_time_idx = -1
+    min_send_time = float('inf')
+    min_send_time_idx = -1
+    sum_local_steps = 0
+
+    # Ensure no division by zero
+    epsilon = 1e-6
+
     for worker in worker_list:
-        train_time_list[worker.idx]=worker.config.train_time
-        send_time_list[worker.idx]=worker.config.send_time
-        if train_time_list[worker.idx]<min_train_time:
-            min_train_time=train_time_list[worker.idx]
-            min_train_time_idx=worker.idx
-        if send_time_list[worker.idx]<min_send_time:
-            min_send_time=send_time_list[worker.idx]
-            min_send_time_idx=worker.idx
+        train_time = max(worker.config.train_time, epsilon)
+        send_time = max(worker.config.send_time, epsilon)
+        train_time_list[worker.idx] = train_time
+        send_time_list[worker.idx] = send_time
+
+        if train_time < min_train_time:
+            min_train_time = train_time
+            min_train_time_idx = worker.idx
+        if send_time < min_send_time:
+            min_send_time = send_time
+            min_send_time_idx = worker.idx
+
     for worker in worker_list:
         worker.config.batch_size=int((train_time_list[min_train_time_idx]/train_time_list[worker.idx])*batch)
         worker.config.compre_ratio=(train_time_list[min_train_time_idx]/train_time_list[worker.idx])*compre_ratio
@@ -265,7 +286,7 @@ def update_B(worker_list,batch_size_list,compre_ratio_list):
         compre_ratio_list[worker.idx]=worker.config.compre_ratio
         sum_local_steps=sum_local_steps+worker.config.batch_size
     for worker in worker_list:
-        worker.config.average_weight=(1.0*worker.config.batch_size)/(sum_local_steps)
+        worker.config.average_weight = (1.0 * worker.config.batch_size) / sum_local_steps
         
     max_train_time=max(train_time_list)
     max_send_time=max(send_time_list)
@@ -273,7 +294,7 @@ def update_B(worker_list,batch_size_list,compre_ratio_list):
     #local_steps/2*0.9
     #total_time=min_train_time*50+min_train_time*40
     #total_time=min_train_time*local_steps/2.0
-    return local_steps,total_time
+    return batch_size_list, total_time
 
 def aggregate_model_para(global_model, worker_list):
     global_para = torch.nn.utils.parameters_to_vector(global_model.parameters()).detach()
@@ -343,10 +364,28 @@ def communication_parallel(worker_list, action, data=None):
         sys.exit(0)
 
 def get_time(worker):
-    train_time,send_time= get_data_socket(worker.socket)
-    worker.config.train_time=train_time
-    worker.config.send_time=send_time
-    print(worker.idx," train time: ", train_time," send time: ", send_time)
+    try:
+        result = get_data_socket(worker.socket)
+        if result is None:
+            print(f"Worker {worker.idx} 未收到时间数据")
+            worker.config.train_time = 1.0  # 设置默认值
+            worker.config.send_time = 1.0   # 设置默认值
+            return
+            
+        if not isinstance(result, tuple) or len(result) != 2:
+            print(f"Worker {worker.idx} 收到的时间数据格式错误")
+            worker.config.train_time = 1.0
+            worker.config.send_time = 1.0
+            return
+            
+        train_time, send_time = result
+        worker.config.train_time = max(float(train_time), 1e-6)  # 确保非零
+        worker.config.send_time = max(float(send_time), 1e-6)    # 确保非零
+        print(f"Worker {worker.idx} train time: {train_time}, send time: {send_time}")
+    except Exception as e:
+        print(f"获取 Worker {worker.idx} 时间数据时出错: {str(e)}")
+        worker.config.train_time = 1.0
+        worker.config.send_time = 1.0
 
 def get_compressed_model_top(worker):
     nelement=worker.config.common_config.para_nums
@@ -361,9 +400,22 @@ def get_compressed_model_top(worker):
     worker.config.neighbor_indices = indices
 
 def get_model(worker):
-    received_para = get_data_socket(worker.socket)
-    worker.config.neighbor_paras = received_para.to(device)
-    # print(worker.config.neighbor_paras)
+    try:
+        received_para = get_data_socket(worker.socket)
+        if received_para is None:
+            print(f"Worker {worker.idx} 未收到参数")
+            worker.config.neighbor_paras = None
+            return
+            
+        if not isinstance(received_para, torch.Tensor):
+            print(f"Worker {worker.idx} 收到的参数类型错误: {type(received_para)}")
+            worker.config.neighbor_paras = None
+            return
+            
+        worker.config.neighbor_paras = received_para.to(device)
+    except Exception as e:
+        print(f"获取 Worker {worker.idx} 参数时出错: {str(e)}")
+        worker.config.neighbor_paras = None
 
 def non_iid_partition111(ratio, worker_num=10):
     partition_sizes = np.ones((10, worker_num)) * ((1 - ratio) / (worker_num-1))
@@ -555,10 +607,14 @@ def partition_data11(dataset_type, data_pattern, worker_num=10):
     return train_data_partition, test_data_partition
 
 def get_data_feature(worker):
-    received_para = get_data_socket(worker.socket)
-    worker.config.neighbor_paras = received_para
+    try:
+        received_para = get_data_socket(worker.socket)
+        worker.config.neighbor_paras = received_para  # 确保赋值
+    except Exception as e:
+        print(f"❌ Failed to receive data for {worker.user_name}: {str(e)}")
+        worker.config.neighbor_paras = None  # 显式赋值 None
 
-def train2(model, device, worker_list,epoch_lr,local_steps):
+def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, total_bandwith, total_time):
     # model1,model2 = models.create_model_instance()
 
     batch_size_list=[50,50,50,50,50,50,50,50,50,50]
@@ -574,48 +630,74 @@ def train2(model, device, worker_list,epoch_lr,local_steps):
         communication_parallel(worker_list, action="get_data_feature")
         paras = []
         for worker in worker_list:
-            # print(worker.config.neighbor_paras)
-            model1,model2 = models.create_model_instance("a","b")
-            torch.nn.utils.vector_to_parameters(origin_para,model2.parameters())
+            if worker.config.neighbor_paras is None or not isinstance(worker.config.neighbor_paras, tuple) or len(worker.config.neighbor_paras) != 2:
+                print(f"Worker {worker.idx} 数据格式不正确，跳过")
+                continue
+                
+            model1, model2 = models.create_model_instance("a", "b")
+            model2.to(device)
+            torch.nn.utils.vector_to_parameters(origin_para, model2.parameters())
             optimizer = optim.SGD(model2.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
-            data_feature,target = worker.config.neighbor_paras[0].to(device),worker.config.neighbor_paras[1].to(device)
-            input = data_feature.detach().requires_grad_()          # 将输入转换成有梯度的形式
-
-            optimizer.zero_grad()
-            output1 = model2(input)
-            loss =loss_func(output1, target)
-            loss.backward()                 
+            
+            try:
+                data_feature, target = worker.config.neighbor_paras[0].to(device), worker.config.neighbor_paras[1].to(device)
+                if data_feature.dim() == 0:
+                    print(f"Worker {worker.idx} 特征维度错误，跳过")
+                    continue
+                    
+                input = data_feature.detach().requires_grad_()
+                optimizer.zero_grad()
+                output1 = model2(input)
+                loss = loss_func(output1, target)
+                loss.backward()
+                
+                grad_in = input.grad
+                optimizer.step()
+                worker.send_data(grad_in.cpu())  # 发送前转到CPU
+                paras.append(copy.deepcopy(model2))
+            except Exception as e:
+                print(f"处理 Worker {worker.idx} 数据时出错: {str(e)}")
+                continue
         
-            grad_in = input.grad               
-            optimizer.step()
-            worker.send_data(grad_in)           
-            paras.append(copy.deepcopy(model2))
-        
-        batch_size_list,sum_time=update_B(worker_list,batch_size_list,compre_ratio_list)
-        total_time=total_time+sum_time
-        total_resource=total_resource+Sum(computation_resource,batch_size_list)
-        total_bandwith=total_bandwith+Sum(bandwith_resource,batch_size_list)
+        if not paras:  # 如果没有成功处理任何worker的数据
+            continue
+            
+        batch_size_list, sum_time = update_B(worker_list, batch_size_list, compre_ratio_list)
+        total_time += sum_time
+        total_resource += Sum(computation_resource, batch_size_list)
+        total_bandwith += Sum(bandwith_resource, batch_size_list)
 
         vector = torch.nn.utils.parameters_to_vector(model.parameters()).detach()
         vector = vector * 0.0
         for para in paras:
             new_para = torch.nn.utils.parameters_to_vector(para.parameters()).detach()
-            vector += new_para*0.1
-        torch.nn.utils.vector_to_parameters(vector,model.parameters())
+            vector += new_para * 0.1
+        torch.nn.utils.vector_to_parameters(vector, model.parameters())
 
-    print("forward and back prpagation")
+    print("forward and back propagation")
     if samples_num != 0:
         train_loss /= samples_num
     
-    # return train_loss
-    return total_resource,total_bandwith,total_time
+    return total_resource, total_bandwith, total_time
 
-def aggregate_model_para2(client_model, worker_list,device):
+def aggregate_model_para2(client_model, worker_list, device):
     global_para = torch.nn.utils.parameters_to_vector(client_model.parameters()).detach()
     with torch.no_grad():
         para_delta = torch.zeros_like(global_para).to(device)
+        valid_workers = 0
         for worker in worker_list:
-            para_delta += 0.1 * worker.config.neighbor_paras
+            if worker.config.neighbor_paras is not None and isinstance(worker.config.neighbor_paras, torch.Tensor):
+                try:
+                    worker_para = worker.config.neighbor_paras.to(device)
+                    para_delta += 0.1 * worker_para
+                    valid_workers += 1
+                except Exception as e:
+                    print(f"处理 Worker {worker.idx} 参数时出错: {str(e)}")
+                    continue
+        
+        if valid_workers > 0:
+            para_delta = para_delta / valid_workers
+            
     torch.nn.utils.vector_to_parameters(para_delta, client_model.parameters())
     return para_delta
 

@@ -101,7 +101,7 @@ def create_dataloaders(dataset, batch_size, selected_idxs=None, shuffle=True, pi
     
     return DataLoaderHelper(dataloader)
 
-def load_datasets(dataset_type, data_path="/data/ymliao/data"):
+def load_datasets(dataset_type, data_path="/data0/scchen/data"):
     
     train_transform = load_default_transform(dataset_type, train=True)
     test_transform = load_default_transform(dataset_type, train=False)

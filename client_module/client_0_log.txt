@@ -1,0 +1,285 @@
+/home/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/data1/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/image.so: undefined symbol: _ZN3c104cuda9SetDeviceEi'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
+  warn(
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identifeature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+feature num:  262144
+feacture size:  1.0
+send
+Traceback (most recent call last):
+  File "client.py", line 227, in <module>
+    def load_dataset(dataset):
+  File "client.py", line 111, in main
+    train2(local_model, train_data, train_label, optimizer, local_steps, device, master_socket,start_idx,train_loader)
+  File "/data0/scchen/AdaSFL/client_module/training_utils.py", line 96, in train2
+    try:
+  File "/data0/scchen/AdaSFL/client_module/client_comm_utils.py", line 52, in get_data_socket
+    data_len = struct.unpack(">I", conn.recv(4))[0]
+struct.error: unpack requires a buffer of 4 bytes
+ied, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]
+[Errno 98] Address already in use
+**OSError** 127.0.0.1 57008
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
+kill -l [exitstatus]

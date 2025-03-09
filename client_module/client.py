@@ -167,11 +167,19 @@ def send_compressed_gradient(local_model,master_socket,ratio,old_para,memory_par
     send_data_socket(compress_paras, master_socket)
     return memory_para
 
-def get_model_para(local_model,master_socket):
-    local_para = get_data_socket(master_socket)
-    local_para.to(device)
-    torch.nn.utils.vector_to_parameters(local_para, local_model.parameters())
-    return local_para
+def get_model_para(local_model, master_socket):
+    try:
+        local_para = get_data_socket(master_socket)
+        if not isinstance(local_para, torch.Tensor):
+            print(f"收到的数据类型错误: {type(local_para)}")
+            return
+            
+        local_para = local_para.to(device)
+        torch.nn.utils.vector_to_parameters(local_para, local_model.parameters())
+        return local_para
+    except Exception as e:
+        print(f"获取模型参数时出错: {str(e)}")
+        return None
 
 def compress_model_rand(local_para, ratio):
     start_time = time.time()

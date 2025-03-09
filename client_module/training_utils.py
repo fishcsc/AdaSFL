@@ -93,39 +93,46 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, maste
     samples_num = len(train_label)
     
     for iter_idx in range(local_iters):
-        batch_size=get_data_socket(master_socket)
-        data = torch.reshape(train_data[start_idx:start_idx+batch_size, :, :], [-1, 32, 32]).to(device)
-        target = (train_label[start_idx:start_idx+batch_size]).to(device)
-        start_idx=start_idx+batch_size
-        if start_idx>=samples_num:
-            start_idx=0
-        
-        data,target=next(train_loader)
-        data, target = data.to(device), target.to(device)
-        optimizer.zero_grad()
+        try:
+            batch_size = get_data_socket(master_socket)
+            if not isinstance(batch_size, int):
+                print(f"收到的batch_size类型错误: {type(batch_size)}")
+                continue
+                
+            data = torch.reshape(train_data[start_idx:start_idx+batch_size, :, :], [-1, 32, 32]).to(device)
+            target = (train_label[start_idx:start_idx+batch_size]).to(device)
+            start_idx = start_idx + batch_size
+            if start_idx >= samples_num:
+                start_idx = 0
+            
+            data, target = next(train_loader)
+            data, target = data.to(device), target.to(device)
+            optimizer.zero_grad()
 
-
-        # data = data.to(device)
-        data_feature = model(data)
-
-        # input = output0.detach().requires_grad_()
-        # x_data = data_feature.to(torch.device("cpu")) 
-        x_data = data_feature.detach().requires_grad_().to(torch.device("cpu")) 
-        target = target.to(torch.device("cpu"))
-        output = x_data.view(-1).detach()
-        print("feature num: ",len(output))
-        print("feacture size: ",len(output)*4/1024/1024)
-        print("send")
-        # print(x_data)
-        
-        send_data_socket((x_data,target), master_socket)            # 发送输出到server
-        grad_in = get_data_socket(master_socket)                    # 接收反向传播
-        grad_in.to(device)
-
-        data_feature.backward(grad_in)
-        optimizer.step()
+            data_feature = model(data)
+            x_data = data_feature.detach().cpu()
+            target = target.cpu()
+            
+            print("feature num: ", x_data.numel())
+            print("feature size: ", x_data.numel() * 4 / 1024 / 1024)
+            print("send")
+            
+            send_data_socket((x_data, target), master_socket)
+            grad_in = get_data_socket(master_socket)
+            
+            if grad_in is None:
+                print("❌ 梯度为空，跳过反向传播")
+                continue
+                
+            grad_in = torch.as_tensor(grad_in, device=device)
+            data_feature.backward(grad_in)
+            optimizer.step()
+            
+        except Exception as e:
+            print(f"训练过程出错: {str(e)}")
+            continue
     
-    # return train_loss
+    return
 
 # test_loss, acc = test2(global_model,client_model, test_loader, device)
 
