@@ -1,285 +1,136 @@
 /home/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/data1/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/image.so: undefined symbol: _ZN3c104cuda9SetDeviceEi'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
   warn(
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identifeature num:  262144
-feacture size:  1.0
-send
+接收到来自 ('127.0.0.1', 33908) 的连接
+收到服务器消息: Hello from server to worker 1
+已发送响应到服务器
+等待接收配置...
+成功接收配置
+{'model_type': 'AlexNet', 'dataset_type': 'CIFAR10', 'batch_size': 64, 'data_pattern': 4, 'lr': 0.1, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 250, 'momentum': -1, 'weight_decay': 0.0}
+para num: 2251584
+Model Size: 8.589111328125 MB
+4999
+Files already downloaded and verified
+Files already downloaded and verified
+recieved local_steps from server:  32
+epoch-1 lr: 0.1
+recieved batch_size from server:  32
 feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
-feature num:  262144
-feacture size:  1.0
-send
+feature size:  1.0
+send feature and target to server
+发送数据失败: [Errno 32] Broken pipe
+❌ 接收头部数据失败
+❌ 梯度为空，跳过反向传播
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+❌ 接收头部数据失败
+recieved batch_size from server:  None
+收到的batch_size类型错误: <class 'NoneType'>
+train time:  0.4568147835323413
+after aggregation, epoch: 1, train loss: 0.0, test loss: 0, test accuracy: 0
+send para
+发送数据失败: [Errno 32] Broken pipe
+send time:  7.634830113928524
+发送数据失败: [Errno 32] Broken pipe
+get begin
+❌ 接收头部数据失败
+收到的数据类型错误: <class 'NoneType'>
+get end
+❌ 接收头部数据失败
+recieved local_steps from server:  None
+epoch-2 lr: 0.0993
 Traceback (most recent call last):
-  File "client.py", line 227, in <module>
-    def load_dataset(dataset):
-  File "client.py", line 111, in main
+  File "client.py", line 256, in <module>
+    main()
+  File "client.py", line 132, in main
     train2(local_model, train_data, train_label, optimizer, local_steps, device, master_socket,start_idx,train_loader)
-  File "/data0/scchen/AdaSFL/client_module/training_utils.py", line 96, in train2
-    try:
-  File "/data0/scchen/AdaSFL/client_module/client_comm_utils.py", line 52, in get_data_socket
-    data_len = struct.unpack(">I", conn.recv(4))[0]
-struct.error: unpack requires a buffer of 4 bytes
-ied, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
-[Errno 98] Address already in use
-**OSError** 127.0.0.1 57009
-(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-sh: 1: kill: Usage: kill [-s sigspec | -signum | -sigspec] [pid | job]... or
-kill -l [exitstatus]
+  File "/data0/scchen/AdaSFL/client_module/training_utils.py", line 95, in train2
+    for iter_idx in range(local_iters):
+TypeError: 'NoneType' object cannot be interpreted as an integer

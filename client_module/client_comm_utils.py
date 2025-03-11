@@ -23,6 +23,7 @@ def connect_send_socket(dst_ip, dst_port):
 def connect_get_socket(listen_ip, listen_port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # s.settimeout(120)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     start_time = time.time()
     while True:
@@ -38,10 +39,10 @@ def connect_get_socket(listen_ip, listen_port):
                 sys.exit(0)
     s.listen(1)
 
-    conn, _ = s.accept()
+    conn, addr = s.accept()
     # conn.settimeout(120)
 
-    return conn
+    return conn, addr
 
 def send_data_socket(data, s):
     try:

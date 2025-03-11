@@ -49,11 +49,31 @@ def main():
     )
     # recorder = SummaryWriter("log_"+str(args.idx))
     # receive config
-    master_socket = connect_get_socket(args.master_ip, args.master_port)
-    config_received = get_data_socket(master_socket)
-    #这里跟服务器通信然后获取配置文件，get_data_socket是堵塞的。
-    for k, v in config_received.__dict__.items():
-        setattr(client_config, k, v)
+    master_socket, addr = connect_get_socket(args.master_ip, args.master_port)
+    print(f"接收到来自 {addr} 的连接")
+    
+    try:
+        # 接收服务器的打招呼
+        greeting = get_data_socket(master_socket)
+        if greeting and "message" in greeting:
+            print(f"收到服务器消息: {greeting['message']}")
+            
+            # 发送响应
+            response = {"message": f"Hello from worker {args.idx}"}
+            send_data_socket(response, master_socket)
+            print("已发送响应到服务器")
+        
+        # 接收实际配置
+        print("等待接收配置...")
+        config_received = get_data_socket(master_socket)
+        if config_received:
+            print("成功接收配置")
+            for k, v in config_received.__dict__.items():
+                setattr(client_config, k, v)
+    except Exception as e:
+        print(f"❌ 通信错误: {str(e)}")
+        master_socket.close()
+        return
 
     computation = client_config.custom["computation"]
     dynamics=client_config.custom["dynamics"]
@@ -98,6 +118,7 @@ def main():
     for epoch in range(1, 1+common_config.epoch):
         
         local_steps=get_data_socket(master_socket)
+        print("recieved local_steps from server: ", local_steps)
 
         if epoch > 1 and epoch % 1 == 0:
             epoch_lr = max((common_config.decay_rate * epoch_lr, common_config.min_lr))

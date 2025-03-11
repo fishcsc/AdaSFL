@@ -19,6 +19,7 @@ import torch.nn.functional as F
 import datasets, models
 from training_utils import test2
 import torch.nn as nn
+from comm_utils import connect_get_socket
 
 #init parameters
 parser = argparse.ArgumentParser(description='Distributed Client')
@@ -143,7 +144,7 @@ def main():
     for epoch_idx in range(1, 1+common_config.epoch):
 
         communication_parallel(worker_list, action="send_para", data=local_steps)
-        print("send_para done")
+        print("send local steps to workers done")
 
         if epoch_idx > 1 and epoch_idx % 1 == 0:
             epoch_lr = max((args.decay_rate * args.lr, args.min_lr))
@@ -338,6 +339,31 @@ def aggregate_compressed_model(global_model, worker_list):
     torch.nn.utils.vector_to_parameters(global_para, global_model.parameters())
     return global_para
 
+# def communication_parallel(worker_list, action, data=None):
+#     try:
+#         loop = asyncio.new_event_loop()
+#         asyncio.set_event_loop(loop)
+#         executor = concurrent.futures.ThreadPoolExecutor(max_workers=len(worker_list),)
+#         tasks = []
+#         for worker in worker_list:
+#             if action == "init":
+#                 tasks.append(loop.run_in_executor(executor, worker.send_init_config))
+#             elif action == "get_para":
+#                 tasks.append(loop.run_in_executor(executor, get_model,worker))
+#             elif action == "get_time":
+#                 tasks.append(loop.run_in_executor(executor, get_time,worker))
+#             elif action == "get_data_feature":
+#                 tasks.append(loop.run_in_executor(executor, get_data_feature,worker))
+#             elif action == "send_model":
+#                 tasks.append(loop.run_in_executor(executor, worker.send_data, data))
+#             elif action == "send_para":
+#                 data=worker.config.batch_size
+#                 tasks.append(loop.run_in_executor(executor, worker.send_data,data))
+#         loop.run_until_complete(asyncio.wait(tasks))
+#         loop.close()
+#     except:
+#         sys.exit(0)
+
 def communication_parallel(worker_list, action, data=None):
     try:
         loop = asyncio.new_event_loop()
@@ -346,13 +372,12 @@ def communication_parallel(worker_list, action, data=None):
         tasks = []
         for worker in worker_list:
             if action == "init":
-                tasks.append(loop.run_in_executor(executor, worker.send_init_config))
+                # 发送初始配置和打招呼
+                tasks.append(loop.run_in_executor(executor, send_init_config_with_greeting, worker))
             elif action == "get_para":
                 tasks.append(loop.run_in_executor(executor, get_model,worker))
             elif action == "get_time":
                 tasks.append(loop.run_in_executor(executor, get_time,worker))
-            elif action == "get_data_feature":
-                tasks.append(loop.run_in_executor(executor, get_data_feature,worker))
             elif action == "send_model":
                 tasks.append(loop.run_in_executor(executor, worker.send_data, data))
             elif action == "send_para":
@@ -362,6 +387,31 @@ def communication_parallel(worker_list, action, data=None):
         loop.close()
     except:
         sys.exit(0)
+
+def send_init_config_with_greeting(worker):
+    try:
+        # 服务器主动连接到worker
+        worker.socket = socket.create_connection(
+            (worker.client_ip, worker.master_port), timeout=5
+        )
+        print(f"✅ {worker.user_name} connected to {worker.client_ip}:{worker.master_port}")
+        
+        # 发送打招呼消息
+        greeting = {"message": f"Hello from server to worker {worker.idx}"}
+        send_data_socket(greeting, worker.socket)
+        
+        # 接收worker的响应
+        response = get_data_socket(worker.socket)
+        if response:
+            print(f"收到 worker {worker.idx} 的响应: {response}")
+        
+        # 发送实际配置
+        send_data_socket(worker.config, worker.socket)
+        print(f"已发送配置到 worker {worker.idx}")
+        
+    except Exception as e:
+        print(f"❌ {worker.user_name} connection failed: {str(e)}")
+
 
 def get_time(worker):
     try:

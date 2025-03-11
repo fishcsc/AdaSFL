@@ -95,6 +95,7 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, maste
     for iter_idx in range(local_iters):
         try:
             batch_size = get_data_socket(master_socket)
+            print("recieved batch_size from server: ", batch_size)
             if not isinstance(batch_size, int):
                 print(f"收到的batch_size类型错误: {type(batch_size)}")
                 continue
@@ -115,7 +116,7 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, maste
             
             print("feature num: ", x_data.numel())
             print("feature size: ", x_data.numel() * 4 / 1024 / 1024)
-            print("send")
+            print("send feature and target to server")
             
             send_data_socket((x_data, target), master_socket)
             grad_in = get_data_socket(master_socket)
