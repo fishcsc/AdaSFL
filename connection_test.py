@@ -27,18 +27,25 @@ def get_data_socket(socket_connection):
             data += packet
         return pickle.loads(data)
     except Exception as e:
-        print(f"❌ 数据接收失败: {str(e)}")
+        error_type = str(type(e).__name__)
+        error_message = str(e).lower()
+        
+        # 检查是否为连接错误
+        if error_type == "ConnectionResetError" or error_type == "BrokenPipeError" or "connection reset" in error_message or "broken pipe" in error_message:
+            print("❌ 发送数据时连接已断开")
+        if not "timed out" in error_message:
+            print(f"❌ 数据接收失败: {str(e)}")
         return None
 
 def receive_messages(socket_connection):
     """持续接收消息的线程函数"""
-    socket_connection.settimeout(30)  # 设置更长的超时时间
+    socket_connection.settimeout(10)  # 设置更长的超时时间
     last_heartbeat = time.time()
     
     while True:
         try:
             # 发送心跳包
-            if time.time() - last_heartbeat > 10:  # 每10秒发送一次心跳
+            if time.time() - last_heartbeat > 5:  # 每10秒发送一次心跳
                 send_data_socket({"message": "heartbeat"}, socket_connection)
                 last_heartbeat = time.time()
                 
@@ -51,8 +58,9 @@ def receive_messages(socket_connection):
                 print(f"\n收到消息: {data['message']}")
                 print("请输入要发送的消息: ", end='', flush=True)
             else:
-                print("\n❌ 连接已断开")
-                break
+                # print("\n❌ 连接已断开")
+                # break
+                time.sleep(0.1)
         except socket.timeout:
             # 超时不断开，继续尝试
             continue

@@ -1,6 +1,6 @@
 /home/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/data1/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/image.so: undefined symbol: _ZN3c104cuda9SetDeviceEi'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
   warn(
-接收到来自 ('127.0.0.1', 38492) 的连接
+接收到来自 ('127.0.0.1', 44958) 的连接
 收到服务器消息: Hello from server to worker 0
 已发送响应到服务器
 等待接收配置...
@@ -113,11 +113,11 @@ recieved batch_size from server:  None
 ❌ 接收头部数据失败
 recieved batch_size from server:  None
 收到的batch_size类型错误: <class 'NoneType'>
-train time:  0.25253110657492317
+train time:  0.5970018884042506
 after aggregation, epoch: 1, train loss: 0.0, test loss: 0, test accuracy: 0
 send para
 发送数据失败: [Errno 32] Broken pipe
-send time:  4.564576021103502
+send time:  7.729025146301193
 发送数据失败: [Errno 32] Broken pipe
 get begin
 ❌ 接收头部数据失败
