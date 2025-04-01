@@ -53,6 +53,7 @@ def receive_messages(socket_connection):
             if data:
                 if data.get("message") == "heartbeat":
                     last_heartbeat = time.time()
+                    print("心跳响应")
                     continue
                     
                 print(f"\n收到消息: {data['message']}")

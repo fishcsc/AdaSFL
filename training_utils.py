@@ -109,5 +109,5 @@ def test2(model_p,model_fe, data_loader, device=torch.device("cpu")):
             correct += batch_correct
             
     test_loss /= len(data_loader.dataset)
-    test_accuracy = np.float(1.0 * correct / len(data_loader.dataset))
+    test_accuracy = float(1.0 * correct / len(data_loader.dataset))
     return test_loss, test_accuracy

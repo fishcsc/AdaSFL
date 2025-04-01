@@ -18,6 +18,7 @@ from config import ClientConfig, CommonConfig
 from client_comm_utils import *
 from training_utils import train2, test
 import datasets, models
+import pdb
 
 parser = argparse.ArgumentParser(description='Distributed Client')
 parser.add_argument('--idx', type=str, default="0",
@@ -50,30 +51,36 @@ def main():
     # recorder = SummaryWriter("log_"+str(args.idx))
     # receive config
     master_socket, addr = connect_get_socket(args.master_ip, args.master_port)
+    reuse = 1
+    master_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, reuse)
+
     print(f"接收到来自 {addr} 的连接")
+    client = ConnectionHandler(master_socket, is_worker=True)
     
     try:
         # 接收服务器的打招呼
-        greeting = get_data_socket(master_socket)
+        greeting = client.recv()
         if greeting and "message" in greeting:
             print(f"收到服务器消息: {greeting['message']}")
             
             # 发送响应
             response = {"message": f"Hello from worker {args.idx}"}
-            send_data_socket(response, master_socket)
+            client.send(response)
             print("已发送响应到服务器")
         
         # 接收实际配置
         print("等待接收配置...")
-        config_received = get_data_socket(master_socket)
+        config_received = client.recv()
         if config_received:
             print("成功接收配置")
             for k, v in config_received.__dict__.items():
                 setattr(client_config, k, v)
     except Exception as e:
         print(f"❌ 通信错误: {str(e)}")
-        master_socket.close()
+        client.close()
         return
+    
+    # pdb.set_trace()
 
     computation = client_config.custom["computation"]
     dynamics=client_config.custom["dynamics"]
@@ -116,8 +123,7 @@ def main():
     local_steps=30
     start_idx=0
     for epoch in range(1, 1+common_config.epoch):
-        
-        local_steps=get_data_socket(master_socket)
+        local_steps=client.recv()
         print("recieved local_steps from server: ", local_steps)
 
         if epoch > 1 and epoch % 1 == 0:
@@ -129,7 +135,7 @@ def main():
         #print("***")
         start_time = time.time()
         optimizer = optim.SGD(local_model.parameters(), lr=epoch_lr, weight_decay=common_config.weight_decay)
-        train2(local_model, train_data, train_label, optimizer, local_steps, device, master_socket,start_idx,train_loader)
+        train2(local_model, train_data, train_label, optimizer, local_steps, device, client,start_idx,train_loader)
         train_loss = 0.0
 
         train_time = time.time() - start_time
@@ -144,53 +150,56 @@ def main():
         print("after aggregation, epoch: {}, train loss: {}, test loss: {}, test accuracy: {}".format(epoch, train_loss, test_loss, acc))
         print("send para")
 
-        send_model_para(local_model,master_socket)
+        send_model_para(local_model,client)
         
         send_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
         while send_time>10 or send_time<1:
              send_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
         
         print("send time: ",send_time)
-        send_data_socket((train_time,send_time), master_socket)
+        client.send((train_time,send_time))
         print("get begin")
-        get_model_para(local_model,master_socket)
+        get_model_para(local_model,client)
         print("get end")
     master_socket.shutdown(2)
-    master_socket.close()
+    client.close()
 
-def send_model_dict(local_model,master_socket):
+def send_model_dict(local_model,object):
     model_dict = dict()
     for para in local_model.state_dict().keys():
         model_dict[para] = copy.deepcopy(local_model.state_dict()[para])
     
     start_time = time.time()
-    send_data_socket(model_dict, master_socket)
+    object.send(model_dict)
     send_time=time.time()-start_time
     pass
 
-def get_model_dict(local_model,master_socket):
-    local_para = get_data_socket(master_socket)
+def get_model_dict(local_model,object):
+    local_para = object.recv()
     local_model.load_state_dict(local_para)
     local_model.to(device)
 
-def send_model_para(local_model,master_socket):
+def send_model_para(local_model,object):
     local_paras = torch.nn.utils.parameters_to_vector(local_model.parameters()).detach()
-    send_data_socket(local_paras, master_socket)
+    object.send(local_paras)
+    
 
-def send_compressed_model(local_model,master_socket,ratio):
+def send_compressed_model(local_model,object,ratio):
     local_paras = torch.nn.utils.parameters_to_vector(local_model.parameters()).nelement()
     compress_paras=compress_model_top(local_paras, ratio)
-    send_data_socket(compress_paras, master_socket)
+    object.send(compress_paras)
+    # send_data_socket(compress_paras, master_socket)
 
-def send_compressed_gradient(local_model,master_socket,ratio,old_para,memory_para):
+def send_compressed_gradient(local_model,object,ratio,old_para,memory_para):
     local_paras = torch.nn.utils.parameters_to_vector(local_model.parameters()).detach()
     memory_para,compress_paras=compress_gradient_top(local_paras, old_para, memory_para,ratio)
-    send_data_socket(compress_paras, master_socket)
+    object.send(compress_paras)
+    # send_data_socket(compress_paras, master_socket)
     return memory_para
 
-def get_model_para(local_model, master_socket):
+def get_model_para(local_model, object):
     try:
-        local_para = get_data_socket(master_socket)
+        local_para = object.recv()
         if not isinstance(local_para, torch.Tensor):
             print(f"收到的数据类型错误: {type(local_para)}")
             return

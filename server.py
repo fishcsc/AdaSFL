@@ -19,7 +19,10 @@ import torch.nn.functional as F
 import datasets, models
 from training_utils import test2
 import torch.nn as nn
-from comm_utils import connect_get_socket
+from comm_utils import *
+import pdb
+
+
 
 #init parameters
 parser = argparse.ArgumentParser(description='Distributed Client')
@@ -109,6 +112,7 @@ def main():
 
     # connect socket and send init config
     communication_parallel(worker_list, action="init")
+    # pdb.set_trace()
 
     recoder: SummaryWriter = SummaryWriter()
     global_model.to(device)
@@ -143,8 +147,8 @@ def main():
     epoch_lr = args.lr
     for epoch_idx in range(1, 1+common_config.epoch):
 
-        communication_parallel(worker_list, action="send_para", data=local_steps)
-        print("send local steps to workers done")
+        communication_parallel(worker_list, action="send_local_steps", data=local_steps)
+        print("epoch {} send local steps ({}) to workers done".format(epoch_idx, local_steps))
 
         if epoch_idx > 1 and epoch_idx % 1 == 0:
             epoch_lr = max((args.decay_rate * args.lr, args.min_lr))
@@ -189,6 +193,7 @@ def main():
     result_out.close()
     for worker in worker_list:
         worker.socket.shutdown(2)
+        worker.client.close()
     
 def Sum(list1,list2):
     sum=0.0
@@ -202,6 +207,9 @@ def random_RC(num):
     return computation_resource,bandwith_resourc
 
 def update_E(worker_list):
+    '''重点是更新local_steps
+    
+    '''
     local_steps = random.randint(40, 60)
     compre_ratio = local_steps / 200.0
     train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
@@ -249,7 +257,23 @@ def update_E(worker_list):
     #total_time=min_train_time*local_steps/2.0
     return local_steps,total_time
 
+
 def update_B(worker_list, batch_size_list, compre_ratio_list):
+    """ 重点是更新批次大小
+    更新各worker的批次大小和压缩比，并计算总训练时间
+    
+    根据各worker的训练时间和传输时间动态调整配置参数，实现负载均衡
+    
+    Args:
+        worker_list: Worker对象列表，每个对象需包含config配置属性和idx索引属性
+        batch_size_list: list类型，用于记录各worker的批次大小配置
+        compre_ratio_list: list类型，用于记录各worker的压缩比配置
+        
+    Returns:
+        tuple: 包含两个元素的元组
+        - batch_size_list: 更新后的批次大小配置列表
+        - total_time: 计算得出的预估总训练时间
+    """
     batch = 128
     compre_ratio = batch / 200.0
     train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
@@ -378,15 +402,24 @@ def communication_parallel(worker_list, action, data=None):
                 tasks.append(loop.run_in_executor(executor, get_model,worker))
             elif action == "get_time":
                 tasks.append(loop.run_in_executor(executor, get_time,worker))
+            elif action == "get_data_feature":
+                tasks.append(loop.run_in_executor(executor, get_data_feature,worker))
             elif action == "send_model":
-                tasks.append(loop.run_in_executor(executor, worker.send_data, data))
-            elif action == "send_para":
+                tasks.append(loop.run_in_executor(executor, send_data, worker, data))
+            elif action == "send_batch_size":
                 data=worker.config.batch_size
-                tasks.append(loop.run_in_executor(executor, worker.send_data,data))
+                tasks.append(loop.run_in_executor(executor, send_data, worker, data))
+            elif action == "send_local_steps":
+                # data=worker.config.local_steps
+                tasks.append(loop.run_in_executor(executor, send_data, worker, data))
         loop.run_until_complete(asyncio.wait(tasks))
         loop.close()
     except:
         sys.exit(0)
+
+
+def send_data(worker, data):
+    worker.client.send(data)
 
 def send_init_config_with_greeting(worker):
     try:
@@ -394,19 +427,28 @@ def send_init_config_with_greeting(worker):
         worker.socket = socket.create_connection(
             (worker.client_ip, worker.master_port), timeout=5
         )
+        reuse = 1
+        worker.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, reuse)
+
         print(f"✅ {worker.user_name} connected to {worker.client_ip}:{worker.master_port}")
-        
+        # print(worker.socket.fileno())
+        worker.client = ConnectionHandler(worker.socket, is_worker=True)
+        # print(worker.socket.fileno())
+        # pdb.set_trace()
         # 发送打招呼消息
         greeting = {"message": f"Hello from server to worker {worker.idx}"}
-        send_data_socket(greeting, worker.socket)
+        worker.client.send(greeting)
+        # send_data_socket(greeting, worker.socket)
         
         # 接收worker的响应
-        response = get_data_socket(worker.socket)
+        # response = get_data_socket(worker.socket)
+        response = worker.client.recv()
         if response:
             print(f"收到 worker {worker.idx} 的响应: {response}")
         
         # 发送实际配置
-        send_data_socket(worker.config, worker.socket)
+        # send_data_socket(worker.config, worker.socket)
+        worker.client.send(worker.config)
         print(f"已发送配置到 worker {worker.idx}")
         
     except Exception as e:
@@ -415,7 +457,7 @@ def send_init_config_with_greeting(worker):
 
 def get_time(worker):
     try:
-        result = get_data_socket(worker.socket)
+        result = worker.client.recv()
         if result is None:
             print(f"Worker {worker.idx} 未收到时间数据")
             worker.config.train_time = 1.0  # 设置默认值
@@ -439,7 +481,7 @@ def get_time(worker):
 
 def get_compressed_model_top(worker):
     nelement=worker.config.common_config.para_nums
-    received_para, indices = get_data_socket(worker.socket)
+    received_para, indices = worker.client.recv()
     received_para.to(device)
 
     restored_model = torch.zeros(nelement).to(device)
@@ -451,7 +493,8 @@ def get_compressed_model_top(worker):
 
 def get_model(worker):
     try:
-        received_para = get_data_socket(worker.socket)
+        # received_para = get_data_socket(worker.socket)
+        received_para = worker.client.recv()
         if received_para is None:
             print(f"Worker {worker.idx} 未收到参数")
             worker.config.neighbor_paras = None
@@ -658,7 +701,8 @@ def partition_data11(dataset_type, data_pattern, worker_num=10):
 
 def get_data_feature(worker):
     try:
-        received_para = get_data_socket(worker.socket)
+        # received_para = get_data_socket(worker.socket)
+        received_para = worker.client.recv()
         worker.config.neighbor_paras = received_para  # 确保赋值
     except Exception as e:
         print(f"❌ Failed to receive data for {worker.user_name}: {str(e)}")
@@ -675,13 +719,23 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
     samples_num = 0
     loss_func = nn.CrossEntropyLoss() 
     for iter_idx in range(local_steps):
-        communication_parallel(worker_list, action="send_para")
+        communication_parallel(worker_list, action="send_batch_size")  # 发送batch_size给workers
         origin_para = torch.nn.utils.parameters_to_vector(model.parameters()).detach()      # 保存原来的参数
         communication_parallel(worker_list, action="get_data_feature")
         paras = []
         for worker in worker_list:
-            if worker.config.neighbor_paras is None or not isinstance(worker.config.neighbor_paras, tuple) or len(worker.config.neighbor_paras) != 2:
-                print(f"Worker {worker.idx} 数据格式不正确，跳过")
+            if worker.config.neighbor_paras is None:
+                print(f"⚠️ Worker {worker.idx} 接收数据为空，跳过处理")
+                continue
+                
+            # 检查2: 数据类型错误的情况
+            if not isinstance(worker.config.neighbor_paras, tuple):
+                print(f"⚠️ Worker {worker.idx} 数据类型错误，期望tuple，实际收到{type(worker.config.neighbor_paras)}")
+                continue
+                
+            # 检查3: 数据长度不符的情况
+            if len(worker.config.neighbor_paras) != 2:
+                print(f"⚠️ Worker {worker.idx} 数据长度不符，期望2个元素，实际收到{len(worker.config.neighbor_paras)}")
                 continue
                 
             model1, model2 = models.create_model_instance("a", "b")
@@ -703,7 +757,7 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
                 
                 grad_in = input.grad
                 optimizer.step()
-                worker.send_data(grad_in.cpu())  # 发送前转到CPU
+                worker.client.send(grad_in.cpu())  # 发送前转到CPU
                 paras.append(copy.deepcopy(model2))
             except Exception as e:
                 print(f"处理 Worker {worker.idx} 数据时出错: {str(e)}")

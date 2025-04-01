@@ -1,0 +1,9 @@
+{'model_type': 'AlexNet', 'dataset_type': 'CIFAR10', 'batch_size': 64, 'data_pattern': 4, 'lr': 0.1, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 250, 'momentum': -1, 'weight_decay': 0.0, 'para_nums': 2251584}
+
+epoch_idx, total_time, total_bandwith, total_resource, acc, test_loss
+1 67.20 52845.00 50880.00 0.1000 2.3026
+2 218.40 174330.00 165044.00 0.1000 2.3026
+3 434.40 314295.00 296246.00 0.1000 2.3026
+4 666.40 464820.00 437184.00 0.1000 2.3026
+5 906.40 620625.00 582990.00 0.1000 2.3026
+6 1118.40 757950.00 711758.00 0.1000 2.3026

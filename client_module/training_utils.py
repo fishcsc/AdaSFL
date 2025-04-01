@@ -86,7 +86,7 @@ def test(model, data_loader, device=torch.device("cpu"), model_type=None):
 
     return test_loss, test_accuracy
 
-def train2(model, train_data, train_label, optimizer, local_iters, device, master_socket, start_idx,train_loader):
+def train2(model, train_data, train_label, optimizer, local_iters, device, client, start_idx,train_loader):
     t_start = time.time()
     model.train()
     train_loss = 0.0
@@ -94,7 +94,8 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, maste
     
     for iter_idx in range(local_iters):
         try:
-            batch_size = get_data_socket(master_socket)
+            batch_size = client.recv()
+            # batch_size = get_data_socket(master_socket)
             print("recieved batch_size from server: ", batch_size)
             if not isinstance(batch_size, int):
                 print(f"收到的batch_size类型错误: {type(batch_size)}")
@@ -118,8 +119,8 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, maste
             print("feature size: ", x_data.numel() * 4 / 1024 / 1024)
             print("send feature and target to server")
             
-            send_data_socket((x_data, target), master_socket)
-            grad_in = get_data_socket(master_socket)
+            client.send((x_data, target))
+            grad_in = client.recv()
             
             if grad_in is None:
                 print("❌ 梯度为空，跳过反向传播")

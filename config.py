@@ -33,6 +33,7 @@ class Worker:
         self.master_port=master_port
         self.location=location
         self.socket = None
+        self.client = None
         self.train_info = None
 
         if self.location=="local":
@@ -68,18 +69,18 @@ class Worker:
 
         print("start process at ", self.user_name, ": ", self.client_ip, ": ", self.master_port)
 
-    def send_data(self, data):
-        send_data_socket(data, self.socket)
+    # def send_data(self, data):
+    #     send_data_socket(data, self.socket)
 
-    def send_init_config(self):
-        try:
-            self.socket = socket.create_connection(
-                (self.client_ip, self.master_port), timeout=5
-            )
-            print(f"✅ {self.user_name} connected to {self.client_ip}:{self.master_port}")
-        except Exception as e:
-            print(f"❌ {self.user_name} connection failed: {str(e)}")
-        send_data_socket(self.config, self.socket)
+    # def send_init_config(self):
+    #     try:
+    #         self.socket = socket.create_connection(
+    #             (self.client_ip, self.master_port), timeout=5
+    #         )
+    #         print(f"✅ {self.user_name} connected to {self.client_ip}:{self.master_port}")
+    #     except Exception as e:
+    #         print(f"❌ {self.user_name} connection failed: {str(e)}")
+    #     send_data_socket(self.config, self.socket)
 
     def get_config(self):
         self.train_info=get_data_socket(self.socket)

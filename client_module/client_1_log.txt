@@ -1,6 +1,6 @@
 /home/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/data1/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/image.so: undefined symbol: _ZN3c104cuda9SetDeviceEi'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
   warn(
-接收到来自 ('127.0.0.1', 37330) 的连接
+接收到来自 ('127.0.0.1', 57506) 的连接
 收到服务器消息: Hello from server to worker 1
 已发送响应到服务器
 等待接收配置...
@@ -11,126 +11,460 @@ Model Size: 8.589111328125 MB
 4999
 Files already downloaded and verified
 Files already downloaded and verified
-recieved local_steps from server:  32
+recieved local_steps from server:  20
 epoch-1 lr: 0.1
 recieved batch_size from server:  32
 feature num:  262144
 feature size:  1.0
 send feature and target to server
-发送数据失败: [Errno 32] Broken pipe
-❌ 接收头部数据失败
-❌ 梯度为空，跳过反向传播
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-❌ 接收头部数据失败
-recieved batch_size from server:  None
-收到的batch_size类型错误: <class 'NoneType'>
-train time:  0.5730847248708261
+训练过程出错: Mismatch in shape: grad_output[0] has a shape of torch.Size([]) and output[0] has a shape of torch.Size([64, 256, 4, 4]).
+recieved batch_size from server:  tensor([[[[-1.2820e-07, -0.0000e+00,  9.2319e-08,  0.0000e+00],
+          [-4.2803e-08, -2.2759e-08,  0.0000e+00,  0.0000e+00],
+          [-0.0000e+00, -0.0000e+00, -0.0000e+00, -0.0000e+00],
+          [-0.0000e+00, -6.1947e-09,  0.0000e+00,  4.2530e-10]],
+
+         [[-0.0000e+00, -0.0000e+00,  0.0000e+00,  0.0000e+00],
+          [ 5.0162e-08,  6.0615e-08,  7.9592e-08,  7.3555e-09],
+          [ 2.8259e-08, -0.0000e+00,  0.0000e+00,  4.4513e-08],
+          [ 9.8010e-08,  4.3985e-08, -0.0000e+00, -7.6185e-08]],
+
+         [[ 0.0000e+00,  3.6438e-10, -8.3899e-08, -8.2411e-08],
+          [ 0.0000e+00,  7.8895e-08, -2.8222e-08, -0.0000e+00],
+          [ 0.0000e+00, -0.0000e+00,  0.0000e+00,  6.5917e-08],
+          [-0.0000e+00, -7.7737e-08, -0.0000e+00, -3.5299e-08]],
+
+         ...,
+
+         [[ 1.4300e-10,  0.0000e+00,  4.1504e-08,  2.4459e-08],
+          [ 1.3035e-08,  6.2421e-08, -0.0000e+00, -1.3359e-07],
+          [-7.1810e-10,  8.8295e-08,  6.9544e-08,  0.0000e+00],
+          [-5.4482e-08, -0.0000e+00, -0.0000e+00,  6.9242e-08]],
+
+         [[-7.1992e-08,  2.0767e-08, -0.0000e+00,  0.0000e+00],
+          [-0.0000e+00, -1.1842e-08,  7.4213e-08, -3.8939e-08],
+          [ 6.2967e-08, -9.5833e-09,  0.0000e+00, -5.4885e-08],
+          [ 0.0000e+00,  9.3791e-09,  8.5939e-08, -0.0000e+00]],
+
+         [[ 9.8378e-08, -4.7911e-09,  1.2220e-07, -2.3412e-08],
+          [-0.0000e+00, -7.8904e-08, -8.1810e-09, -1.3155e-07],
+          [ 0.0000e+00, -0.0000e+00, -0.0000e+00,  0.0000e+00],
+          [-5.0517e-08, -0.0000e+00, -0.0000e+00,  0.0000e+00]]],
+
+
+        [[[ 7.0846e-08,  0.0000e+00,  1.1352e-08, -4.7560e-08],
+          [ 0.0000e+00,  0.0000e+00, -0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00,  2.1117e-08, -0.0000e+00, -3.0619e-09],
+          [-1.0470e-07, -2.0967e-08,  4.0545e-08,  0.0000e+00]],
+
+         [[ 0.0000e+00,  0.0000e+00,  1.2991e-07, -2.7380e-08],
+          [-2.2403e-08,  1.6456e-08, -0.0000e+00,  7.3399e-08],
+          [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  1.4256e-07],
+          [ 6.4289e-08,  4.0331e-09,  5.0519e-08, -1.2714e-07]],
+
+         [[ 0.0000e+00, -2.1073e-08,  0.0000e+00,  4.6211e-08],
+          [-4.4014e-08,  5.1012e-08, -0.0000e+00, -1.0198e-07],
+          [-4.8101e-08, -0.0000e+00,  2.5492e-08,  3.5941e-08],
+          [ 5.5026e-08, -0.0000e+00, -9.0549e-08,  0.0000e+00]],
+
+         ...,
+
+         [[-0.0000e+00, -7.1508e-08, -0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00, -6.5903e-08,  0.0000e+00,  8.6663e-08],
+          [ 1.0855e-07, -6.5724e-08,  0.0000e+00, -0.0000e+00],
+          [-1.5186e-08,  3.8536e-08,  0.0000e+00, -2.1814e-08]],
+
+         [[-1.4297e-07,  8.0104e-08,  0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00, -0.0000e+00, -0.0000e+00,  0.0000e+00],
+          [ 4.8271e-08, -0.0000e+00,  1.3866e-08,  0.0000e+00],
+          [-4.5737e-08,  0.0000e+00, -1.2687e-08, -7.1812e-08]],
+
+         [[-7.9275e-08,  0.0000e+00,  0.0000e+00,  0.0000e+00],
+          [ 0.0000e+00, -3.4861e-08,  0.0000e+00, -1.1928e-08],
+          [-0.0000e+00, -4.9699e-08,  7.9465e-08,  0.0000e+00],
+          [ 0.0000e+00,  6.4996e-08, -1.8006e-07,  0.0000e+00]]],
+
+
+        [[[ 0.0000e+00,  0.0000e+00,  1.0071e-08, -2.3459e-08],
+          [-7.6292e-08,  0.0000e+00, -2.0570e-08, -0.0000e+00],
+          [ 5.0694e-08, -0.0000e+00, -1.4471e-08,  0.0000e+00],
+          [-0.0000e+00, -0.0000e+00,  0.0000e+00,  0.0000e+00]],
+
+         [[ 0.0000e+00,  1.9883e-07,  3.4547e-08, -0.0000e+00],
+          [ 0.0000e+00, -0.0000e+00,  0.0000e+00,  0.0000e+00],
+          [ 0.0000e+00, -1.9439e-08,  0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00, -0.0000e+00, -0.0000e+00, -4.3890e-08]],
+
+         [[ 6.5725e-09, -3.5459e-08, -6.9510e-09, -2.1462e-08],
+          [ 0.0000e+00,  9.3673e-08, -0.0000e+00,  0.0000e+00],
+          [-4.3824e-08, -0.0000e+00,  0.0000e+00, -8.3392e-08],
+          [ 0.0000e+00,  0.0000e+00, -4.0018e-08,  0.0000e+00]],
+
+         ...,
+
+         [[ 6.0677e-08, -0.0000e+00, -3.9232e-08, -7.8752e-08],
+          [ 6.8306e-08, -0.0000e+00, -5.8153e-08, -0.0000e+00],
+          [ 0.0000e+00, -0.0000e+00,  3.2593e-08,  6.4307e-08],
+          [ 8.2506e-09, -0.0000e+00,  0.0000e+00, -0.0000e+00]],
+
+         [[-1.1389e-07, -1.7530e-08,  0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00,  1.7840e-08,  6.1534e-08,  5.7746e-08],
+          [ 0.0000e+00,  0.0000e+00, -1.9698e-08, -0.0000e+00],
+          [ 0.0000e+00, -0.0000e+00,  0.0000e+00,  1.3255e-08]],
+
+         [[-0.0000e+00,  0.0000e+00,  0.0000e+00,  6.9754e-08],
+          [-1.1734e-08, -8.7476e-08, -0.0000e+00, -0.0000e+00],
+          [-6.1303e-08,  0.0000e+00, -0.0000e+00, -0.0000e+00],
+          [ 3.7051e-08,  0.0000e+00, -4.9783e-08,  0.0000e+00]]],
+
+
+        ...,
+
+
+        [[[ 4.9641e-08, -3.1676e-08, -0.0000e+00,  0.0000e+00],
+          [-0.0000e+00,  4.1344e-08,  8.1859e-08, -9.4576e-09],
+          [ 1.4291e-07, -5.0633e-08, -8.0078e-08,  0.0000e+00],
+          [-0.0000e+00, -0.0000e+00,  0.0000e+00,  5.6515e-09]],
+
+         [[ 3.4682e-09,  0.0000e+00, -0.0000e+00, -0.0000e+00],
+          [-5.0178e-08, -0.0000e+00, -2.8736e-09, -0.0000e+00],
+          [ 4.8044e-08,  0.0000e+00, -1.5813e-08, -5.8581e-08],
+          [ 5.0802e-08,  8.7195e-09,  0.0000e+00, -0.0000e+00]],
+
+         [[ 1.2590e-08,  7.7556e-08, -1.5441e-08,  0.0000e+00],
+          [-9.1522e-08, -0.0000e+00, -0.0000e+00,  0.0000e+00],
+          [-0.0000e+00,  0.0000e+00,  0.0000e+00,  1.6055e-07],
+          [ 0.0000e+00,  0.0000e+00, -0.0000e+00, -9.7019e-09]],
+
+         ...,
+
+         [[-0.0000e+00, -6.4503e-08, -1.4721e-08, -0.0000e+00],
+          [ 1.2325e-08, -0.0000e+00, -2.4944e-08,  9.3618e-10],
+          [ 2.0959e-08, -0.0000e+00,  5.7879e-08,  1.8238e-08],
+          [ 1.2660e-07, -0.0000e+00, -3.9536e-08,  0.0000e+00]],
+
+         [[-1.0140e-07,  0.0000e+00,  3.3705e-08,  2.9558e-08],
+          [ 0.0000e+00,  0.0000e+00,  7.2459e-08,  0.0000e+00],
+          [ 7.0192e-08, -2.7381e-08,  2.9262e-08, -8.6763e-08],
+          [ 0.0000e+00, -0.0000e+00,  7.6466e-09, -9.2205e-08]],
+
+         [[-1.2794e-07, -0.0000e+00,  0.0000e+00,  9.6843e-08],
+          [ 0.0000e+00, -3.6029e-08, -1.2345e-07,  3.3237e-08],
+          [-0.0000e+00,  0.0000e+00, -8.5276e-08,  0.0000e+00],
+          [-0.0000e+00,  0.0000e+00,  0.0000e+00,  4.1905e-08]]],
+
+
+        [[[ 6.6872e-08, -0.0000e+00, -3.5681e-09,  5.1133e-08],
+          [-8.5928e-08,  0.0000e+00,  0.0000e+00, -0.0000e+00],
+          [-4.7201e-09, -0.0000e+00, -5.6719e-09, -4.6363e-10],
+          [-0.0000e+00, -2.7806e-08,  9.4689e-08, -0.0000e+00]],
+
+         [[-0.0000e+00,  0.0000e+00, -0.0000e+00, -0.0000e+00],
+          [-5.3506e-08,  0.0000e+00,  3.9342e-08,  8.4214e-09],
+          [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00,  0.0000e+00, -1.4169e-07, -1.8593e-08]],
+
+         [[ 0.0000e+00, -2.2310e-08,  0.0000e+00,  0.0000e+00],
+          [-0.0000e+00, -0.0000e+00, -0.0000e+00, -0.0000e+00],
+          [-0.0000e+00,  0.0000e+00,  7.7414e-08,  0.0000e+00],
+          [ 4.0662e-08, -0.0000e+00, -0.0000e+00,  0.0000e+00]],
+
+         ...,
+
+         [[ 0.0000e+00, -7.2100e-08, -0.0000e+00, -8.0640e-08],
+          [ 0.0000e+00, -0.0000e+00, -0.0000e+00,  3.5828e-08],
+          [-4.4947e-08, -3.1234e-08, -3.1589e-08,  0.0000e+00],
+          [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  9.8213e-08]],
+
+         [[-0.0000e+00, -6.0606e-08,  4.9032e-08, -5.3511e-08],
+          [-5.7568e-08, -0.0000e+00, -3.8154e-08,  2.4122e-08],
+          [ 0.0000e+00, -0.0000e+00,  7.9470e-09,  0.0000e+00],
+          [ 0.0000e+00,  7.2619e-08,  0.0000e+00, -0.0000e+00]],
+
+         [[-2.0077e-08, -9.3889e-08,  7.5140e-08, -0.0000e+00],
+          [-0.0000e+00, -0.0000e+00, -1.7301e-08, -1.0169e-07],
+          [-0.0000e+00,  0.0000e+00, -0.0000e+00,  0.0000e+00],
+          [-4.3555e-08, -2.4974e-08,  3.3833e-08,  1.2986e-07]]],
+
+
+        [[[ 1.0500e-07, -4.8884e-08, -0.0000e+00,  6.8649e-08],
+          [-1.3777e-07,  0.0000e+00, -0.0000e+00,  0.0000e+00],
+          [ 9.8877e-08, -9.3556e-08, -8.9281e-08,  4.9439e-08],
+          [-6.4822e-08,  0.0000e+00, -8.3544e-08, -2.4191e-08]],
+
+         [[ 0.0000e+00,  8.8806e-08,  4.2897e-09, -2.3817e-08],
+          [-0.0000e+00,  0.0000e+00, -4.4697e-08, -1.7515e-09],
+          [ 4.7896e-08, -0.0000e+00, -0.0000e+00,  2.5514e-08],
+          [ 1.2499e-07,  1.1621e-08, -0.0000e+00,  7.3540e-08]],
+
+         [[ 0.0000e+00,  0.0000e+00,  7.5848e-10,  1.7992e-07],
+          [-1.2421e-07, -0.0000e+00, -0.0000e+00,  0.0000e+00],
+          [-0.0000e+00, -1.0172e-08,  5.4523e-08,  5.9030e-08],
+          [ 4.5924e-08, -2.5779e-08, -0.0000e+00, -0.0000e+00]],
+
+         ...,
+
+         [[ 0.0000e+00, -1.9899e-08, -0.0000e+00, -0.0000e+00],
+          [ 0.0000e+00, -3.2081e-08, -2.4084e-08,  5.6120e-08],
+          [-0.0000e+00,  6.5917e-08,  4.8180e-08,  0.0000e+00],
+          [-0.0000e+00, -0.0000e+00, -5.7253e-09,  0.0000e+00]],
+
+         [[-0.0000e+00,  0.0000e+00,  0.0000e+00, -0.0000e+00],
+          [-5.0043e-08, -9.5717e-08, -0.0000e+00, -0.0000e+00],
+          [ 4.3056e-08, -0.0000e+00,  1.2572e-08,  0.0000e+00],
+          [-4.0643e-08, -5.9005e-08,  8.0472e-09,  2.8626e-09]],
+
+         [[ 2.8899e-08,  3.4787e-08,  0.0000e+00,  1.0936e-08],
+          [ 1.8486e-08, -0.0000e+00,  3.4713e-08,  6.0264e-09],
+          [-0.0000e+00,  3.4858e-08, -0.0000e+00, -0.0000e+00],
+          [ 8.1753e-08,  1.0594e-07, -8.4696e-08,  7.7945e-08]]]])
+收到的batch_size类型错误: <class 'torch.Tensor'>
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+train time:  0.6676196431457824
 after aggregation, epoch: 1, train loss: 0.0, test loss: 0, test accuracy: 0
 send para
-发送数据失败: [Errno 32] Broken pipe
-send time:  6.596363339509946
-发送数据失败: [Errno 32] Broken pipe
+send time:  7.156966163412141
 get begin
-❌ 接收头部数据失败
-收到的数据类型错误: <class 'NoneType'>
 get end
-❌ 接收头部数据失败
-recieved local_steps from server:  None
+recieved local_steps from server:  20
 epoch-2 lr: 0.0993
-Traceback (most recent call last):
-  File "client.py", line 256, in <module>
-    main()
-  File "client.py", line 132, in main
-    train2(local_model, train_data, train_label, optimizer, local_steps, device, master_socket,start_idx,train_loader)
-  File "/data0/scchen/AdaSFL/client_module/training_utils.py", line 95, in train2
-    for iter_idx in range(local_iters):
-TypeError: 'NoneType' object cannot be interpreted as an integer
+recieved batch_size from server:  41
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+train time:  0.6150540776744147
+after aggregation, epoch: 2, train loss: 0.0, test loss: 0, test accuracy: 0
+send para
+send time:  1.1263195446189682
+get begin
+收到的数据类型错误: <class 'int'>
+get end
+recieved local_steps from server:  128
+epoch-3 lr: 0.0986049
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+recieved batch_size from server:  128
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+🚨 连接异常: [Errno 32] Broken pipe，正在重试 (1/3)
+🚨 连接异常: [Errno 32] Broken pipe，正在重试 (2/3)
+❌ 梯度为空，跳过反向传播
+🚨 连接异常: [Errno 32] Broken pipe，正在重试 (3/3)
+❌ 发送失败，已达最大重试次数 3次
