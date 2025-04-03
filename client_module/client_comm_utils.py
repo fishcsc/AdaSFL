@@ -157,7 +157,7 @@ class ConnectionHandler:
     #     except queue.Empty:
     #         return None
 
-    def recv(self, timeout=5):
+    def recv(self, timeout=20):
         """从队列获取消息（阻塞模式，可选超时）"""
         try:
             return self.message_queue.get(block=True, timeout=timeout)

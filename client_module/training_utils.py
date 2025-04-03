@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from client_comm_utils import *
+from models import *
 
 
 
@@ -86,9 +87,10 @@ def test(model, data_loader, device=torch.device("cpu"), model_type=None):
 
     return test_loss, test_accuracy
 
-def train2(model, train_data, train_label, optimizer, local_iters, device, client, start_idx,train_loader):
+def train2(model, global_model, train_data, train_label, optimizer, optimizer2, local_iters, device, client, start_idx,train_loader):
     t_start = time.time()
     model.train()
+    global_model.train()
     train_loss = 0.0
     samples_num = len(train_label)
     
@@ -112,16 +114,27 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, clien
             optimizer.zero_grad()
 
             data_feature = model(data)
-            x_data = data_feature.detach().cpu()
-            target = target.cpu()
+            x_data = data_feature.detach()
+            # target = target.cpu()
+            # print("模型参数验证：", x_data.sum().item())
             
             print("feature num: ", x_data.numel())
             print("feature size: ", x_data.numel() * 4 / 1024 / 1024)
             print("send feature and target to server")
             
             client.send((x_data, target))
-            grad_in = client.recv()
             
+            input = x_data.detach().requires_grad_()
+            optimizer2.zero_grad()
+            output = global_model(input)
+            loss_func = nn.CrossEntropyLoss()
+            loss = loss_func(output, target)
+            train_loss += loss.item()
+            loss.backward()
+            grad_in1 = client.recv()
+            grad_in = input.grad 
+            optimizer2.step()
+           
             if grad_in is None:
                 print("❌ 梯度为空，跳过反向传播")
                 continue
@@ -134,6 +147,8 @@ def train2(model, train_data, train_label, optimizer, local_iters, device, clien
             print(f"训练过程出错: {str(e)}")
             continue
     
+    train_loss /= local_iters
+    print("train_loss: ", train_loss)
     return
 
 # test_loss, acc = test2(global_model,client_model, test_loader, device)

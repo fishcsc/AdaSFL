@@ -55,7 +55,7 @@ def main():
     master_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, reuse)
 
     print(f"接收到来自 {addr} 的连接")
-    client = ConnectionHandler(master_socket, is_worker=True)
+    client = ConnectionHandler(master_socket, is_worker=False)
     
     try:
         # 接收服务器的打招呼
@@ -102,9 +102,10 @@ def main():
     # init config
     print(common_config.__dict__)
 
-    local_model,_ = models.create_model_instance(common_config.dataset_type, common_config.model_type)
+    local_model,global_model = models.create_model_instance(common_config.dataset_type, common_config.model_type)
     torch.nn.utils.vector_to_parameters(client_config.para, local_model.parameters())
     local_model.to(device)
+    global_model.to(device)
     init_para = torch.nn.utils.parameters_to_vector(local_model.parameters())           # 计算参数
     model_size = init_para.nelement() * 4 / 1024 / 1024
     print("para num: {}".format(init_para.nelement()))
@@ -135,7 +136,8 @@ def main():
         #print("***")
         start_time = time.time()
         optimizer = optim.SGD(local_model.parameters(), lr=epoch_lr, weight_decay=common_config.weight_decay)
-        train2(local_model, train_data, train_label, optimizer, local_steps, device, client,start_idx,train_loader)
+        optimizer2 = optim.SGD(global_model.parameters(), lr=epoch_lr, weight_decay=common_config.weight_decay)
+        train2(local_model, global_model, train_data, train_label, optimizer, optimizer2, local_steps, device, client,start_idx,train_loader)
         train_loss = 0.0
 
         train_time = time.time() - start_time

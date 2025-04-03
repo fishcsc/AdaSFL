@@ -1,0 +1,36 @@
+/home/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/data1/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/image.so: undefined symbol: _ZN3c104cuda9SetDeviceEi'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
+  warn(
+接收到来自 ('127.0.0.1', 49346) 的连接
+收到服务器消息: Hello from server to worker 3
+已发送响应到服务器
+等待接收配置...
+成功接收配置
+{'model_type': 'AlexNet', 'dataset_type': 'CIFAR10', 'batch_size': 64, 'data_pattern': 4, 'lr': 0.1, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 250, 'momentum': -1, 'weight_decay': 0.0}
+para num: 2251584
+Model Size: 8.589111328125 MB
+4999
+Files already downloaded and verified
+Files already downloaded and verified
+recieved local_steps from server:  1
+epoch-1 lr: 0.1
+recieved batch_size from server:  32
+训练过程出错: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 47.54 GiB total capacity; 162.12 MiB already allocated; 15.12 MiB free; 166.00 MiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+train_loss:  0.0
+train time:  0.733380324484088
+after aggregation, epoch: 1, train loss: 0.0, test loss: 0, test accuracy: 0
+send para
+send time:  4.491709164595431
+get begin
+收到的数据类型错误: <class 'NoneType'>
+get end
+recieved local_steps from server:  tensor([-0.1076,  0.1916,  0.1184,  ...,  0.0057,  0.0206,  0.0165],
+       device='cuda:0')
+epoch-2 lr: 0.0993
+Traceback (most recent call last):
+  File "client.py", line 267, in <module>
+    main()
+  File "client.py", line 140, in main
+    train2(local_model, global_model, train_data, train_label, optimizer, optimizer2, local_steps, device, client,start_idx,train_loader)
+  File "/data0/scchen/AdaSFL/client_module/training_utils.py", line 97, in train2
+    for iter_idx in range(local_iters):
+TypeError: only integer tensors of a single element can be converted to an index

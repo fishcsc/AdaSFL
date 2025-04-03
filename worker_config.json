@@ -12,6 +12,24 @@
       "master_port": 57008,
       "computation": 5,
       "dynamics": 4
+    },
+    {
+      "ip_address": "192.168.0.13",
+      "user_name": "edge06",
+      "pass_wd": "edge06",
+      "listen_port": 47009,
+      "master_port": 57009,
+      "computation": 5,
+      "dynamics": 4
+    },
+    {
+      "ip_address": "192.168.0.13",
+      "user_name": "edge07",
+      "pass_wd": "edge07",
+      "listen_port": 47010,
+      "master_port": 57010,
+      "computation": 5,
+      "dynamics": 4
     }
   ]
 }

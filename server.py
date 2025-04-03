@@ -142,7 +142,7 @@ def main():
     result_out.write('\n')
     result_out.write("epoch_idx, total_time, total_bandwith, total_resource, acc, test_loss")
     result_out.write('\n')
-    local_steps=20
+    local_steps=1
 
     epoch_lr = args.lr
     for epoch_idx in range(1, 1+common_config.epoch):
@@ -237,7 +237,7 @@ def update_E(worker_list):
             min_send_time_idx = worker.idx
 
     for worker in worker_list:
-        worker.config.batch_size=int((train_time_list[min_train_time_idx]/train_time_list[worker.idx])*local_steps)
+        # worker.config.batch_size=int((train_time_list[min_train_time_idx]/train_time_list[worker.idx])*local_steps)
         worker.config.compre_ratio=(train_time_list[min_train_time_idx]/train_time_list[worker.idx])*compre_ratio
         #(send_time_list[min_train_time_idx]/send_time_list[worker.idx])*compre_ratio
         # worker.config.batch_size=5
@@ -408,6 +408,7 @@ def communication_parallel(worker_list, action, data=None):
                 tasks.append(loop.run_in_executor(executor, send_data, worker, data))
             elif action == "send_batch_size":
                 data=worker.config.batch_size
+                # print("发送batch_size: ", data)
                 tasks.append(loop.run_in_executor(executor, send_data, worker, data))
             elif action == "send_local_steps":
                 # data=worker.config.local_steps
@@ -432,7 +433,7 @@ def send_init_config_with_greeting(worker):
 
         print(f"✅ {worker.user_name} connected to {worker.client_ip}:{worker.master_port}")
         # print(worker.socket.fileno())
-        worker.client = ConnectionHandler(worker.socket, is_worker=True)
+        worker.client = ConnectionHandler(worker.socket, is_worker=False)
         # print(worker.socket.fileno())
         # pdb.set_trace()
         # 发送打招呼消息
@@ -748,12 +749,14 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
                 if data_feature.dim() == 0:
                     print(f"Worker {worker.idx} 特征维度错误，跳过")
                     continue
-                    
+                # print("模型参数验证：", data_feature.sum().item())
+
                 input = data_feature.detach().requires_grad_()
                 optimizer.zero_grad()
                 output1 = model2(input)
                 loss = loss_func(output1, target)
                 loss.backward()
+                train_loss += loss.item()
                 
                 grad_in = input.grad
                 optimizer.step()
@@ -775,12 +778,15 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
         vector = vector * 0.0
         for para in paras:
             new_para = torch.nn.utils.parameters_to_vector(para.parameters()).detach()
-            vector += new_para * 0.1
+            vector += new_para 
+        vector /= len(paras)
         torch.nn.utils.vector_to_parameters(vector, model.parameters())
 
     print("forward and back propagation")
     if samples_num != 0:
         train_loss /= samples_num
+    train_loss /= local_steps
+    print(f"一轮的训练损失(train loss): {train_loss}")
     
     return total_resource, total_bandwith, total_time
 
@@ -793,7 +799,7 @@ def aggregate_model_para2(client_model, worker_list, device):
             if worker.config.neighbor_paras is not None and isinstance(worker.config.neighbor_paras, torch.Tensor):
                 try:
                     worker_para = worker.config.neighbor_paras.to(device)
-                    para_delta += 0.1 * worker_para
+                    para_delta += worker_para
                     valid_workers += 1
                 except Exception as e:
                     print(f"处理 Worker {worker.idx} 参数时出错: {str(e)}")
