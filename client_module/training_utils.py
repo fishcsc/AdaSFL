@@ -87,8 +87,7 @@ def test(model, data_loader, device=torch.device("cpu"), model_type=None):
 
     return test_loss, test_accuracy
 
-def train2(model, global_model, train_data, train_label, optimizer, optimizer2, local_iters, device, client, start_idx,train_loader):
-    t_start = time.time()
+def train2(model, global_model, train_data, train_label, optimizer, optimizer2, local_iters, device, client, start_idx,train_loader, sleep_time):
     model.train()
     global_model.train()
     train_loss = 0.0
@@ -96,7 +95,9 @@ def train2(model, global_model, train_data, train_label, optimizer, optimizer2, 
     
     for iter_idx in range(local_iters):
         try:
+            t_start = time.time()
             batch_size = client.recv()
+            
             # batch_size = get_data_socket(master_socket)
             print("recieved batch_size from server: ", batch_size)
             if not isinstance(batch_size, int):
@@ -113,8 +114,10 @@ def train2(model, global_model, train_data, train_label, optimizer, optimizer2, 
             data, target = data.to(device), target.to(device)
             optimizer.zero_grad()
 
+            time_1 = time.time()
             data_feature = model(data)
             x_data = data_feature.detach()
+            time_forward = time.time() - time_1
             # target = target.cpu()
             # print("模型参数验证：", x_data.sum().item())
             
@@ -124,24 +127,36 @@ def train2(model, global_model, train_data, train_label, optimizer, optimizer2, 
             
             client.send((x_data, target))
             
+            #本地计算lossloss
             input = x_data.detach().requires_grad_()
             optimizer2.zero_grad()
             output = global_model(input)
             loss_func = nn.CrossEntropyLoss()
             loss = loss_func(output, target)
             train_loss += loss.item()
-            loss.backward()
-            grad_in1 = client.recv()
-            grad_in = input.grad 
+            loss.backward()  
+            grad_in1 = input.grad 
             optimizer2.step()
            
+            
+                
+            grad_in = client.recv() 
             if grad_in is None:
                 print("❌ 梯度为空，跳过反向传播")
                 continue
-                
+            time_2 = time.time()
             grad_in = torch.as_tensor(grad_in, device=device)
             data_feature.backward(grad_in)
             optimizer.step()
+            time_backward = time.time() - time_2
+
+            time.sleep(sleep_time)
+            compute_time = time_forward + time_backward + sleep_time
+           
+            print("compute_time: ", compute_time)
+            one_step_time = time.time() - t_start
+            print("one_step_time: ", one_step_time)
+            client.send((compute_time, 0))
             
         except Exception as e:
             print(f"训练过程出错: {str(e)}")

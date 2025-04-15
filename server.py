@@ -29,11 +29,11 @@ parser = argparse.ArgumentParser(description='Distributed Client')
 parser.add_argument('--dataset_type', type=str, default='CIFAR10')
 parser.add_argument('--model_type', type=str, default='AlexNet')
 parser.add_argument('--batch_size', type=int, default=64)
-parser.add_argument('--data_pattern', type=int, default=4)
+parser.add_argument('--data_pattern', type=int, default=0)
 parser.add_argument('--lr', type=float, default=0.1)
 parser.add_argument('--decay_rate', type=float, default=0.993)
 parser.add_argument('--min_lr', type=float, default=0.005)
-parser.add_argument('--epoch', type=int, default=250)
+parser.add_argument('--epoch', type=int, default=10000) # set to 10000 for splite_sfl
 parser.add_argument('--momentum', type=float, default=-1)
 parser.add_argument('--weight_decay', type=float, default=0.0)
 parser.add_argument('--use_cuda', action="store_false", default=True)
@@ -173,7 +173,9 @@ def main():
         print("Epoch: {}, accuracy: {}, test_loss: {}\n".format(epoch_idx, acc, test_loss))
 
         local_steps,sum_time=update_E(worker_list)
-        total_time=total_time+sum_time
+        total_time+=sum_time
+        # print("total_time:", total_time)
+        # print("sum_time:",sum_time)
         total_resource=total_resource+Sum(computation_resource,local_steps_list)
         total_bandwith=total_bandwith+Sum(bandwith_resource,compre_ratio_list)
         print("total_time: {}, total_resource: {}, total_bandwith: {}\n".format(total_time,total_resource,total_bandwith))
@@ -210,7 +212,8 @@ def update_E(worker_list):
     '''重点是更新local_steps
     
     '''
-    local_steps = random.randint(40, 60)
+    local_steps = 40
+    # local_steps = 1 # splite_sfl
     compre_ratio = local_steps / 200.0
     train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
     send_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
@@ -251,7 +254,7 @@ def update_E(worker_list):
         
     max_train_time=max(train_time_list)
     max_send_time=max(send_time_list)
-    total_time=max_train_time*4
+    total_time=max_train_time
     #local_steps/2*0.9
     #total_time=min_train_time*50+min_train_time*40
     #total_time=min_train_time*local_steps/2.0
@@ -287,11 +290,13 @@ def update_B(worker_list, batch_size_list, compre_ratio_list):
     # Ensure no division by zero
     epsilon = 1e-6
 
-    for worker in worker_list:
+    tmp = ""
+    for idx, worker in enumerate(worker_list):
         train_time = max(worker.config.train_time, epsilon)
         send_time = max(worker.config.send_time, epsilon)
         train_time_list[worker.idx] = train_time
         send_time_list[worker.idx] = send_time
+        tmp += " " + str(idx) + ": " + str(train_time) 
 
         if train_time < min_train_time:
             min_train_time = train_time
@@ -299,9 +304,12 @@ def update_B(worker_list, batch_size_list, compre_ratio_list):
         if send_time < min_send_time:
             min_send_time = send_time
             min_send_time_idx = worker.idx
-
+    print(tmp)
     for worker in worker_list:
+        #动态更新批次大小
         worker.config.batch_size=int((train_time_list[min_train_time_idx]/train_time_list[worker.idx])*batch)
+        #固定批次大小
+        # worker.config.batch_size=batch
         worker.config.compre_ratio=(train_time_list[min_train_time_idx]/train_time_list[worker.idx])*compre_ratio
         #(send_time_list[min_train_time_idx]/send_time_list[worker.idx])*compre_ratio
         # worker.config.batch_size=5
@@ -315,7 +323,9 @@ def update_B(worker_list, batch_size_list, compre_ratio_list):
         
     max_train_time=max(train_time_list)
     max_send_time=max(send_time_list)
-    total_time=max_train_time*4
+    # total_time=max_train_time*4
+    total_time=max_train_time
+    
     #local_steps/2*0.9
     #total_time=min_train_time*50+min_train_time*40
     #total_time=min_train_time*local_steps/2.0
@@ -474,7 +484,7 @@ def get_time(worker):
         train_time, send_time = result
         worker.config.train_time = max(float(train_time), 1e-6)  # 确保非零
         worker.config.send_time = max(float(send_time), 1e-6)    # 确保非零
-        print(f"Worker {worker.idx} train time: {train_time}, send time: {send_time}")
+        # print(f"Worker {worker.idx} train time: {train_time}, send time: {send_time}")
     except Exception as e:
         print(f"获取 Worker {worker.idx} 时间数据时出错: {str(e)}")
         worker.config.train_time = 1.0
@@ -526,6 +536,18 @@ def non_iid_partition(ratio, train_class_num, worker_num):
         partition_sizes[i][i%worker_num]=ratio
 
     return partition_sizes
+
+def non_iid_partition_multi(ratio, train_class_num, worker_num, prefer_worker_num=3):
+    partition_sizes = np.ones((train_class_num, worker_num)) * ((1 - ratio) / (worker_num - prefer_worker_num))
+    
+    for i in range(train_class_num):
+        # 选择 prefer_worker_num 个客户端对该类别有偏好
+        preferred_workers = [(i + j) % worker_num for j in range(prefer_worker_num)]
+        for w in preferred_workers:
+            partition_sizes[i][w] = ratio / prefer_worker_num
+
+    return partition_sizes
+
 
 def partition_data(dataset_type, data_pattern, worker_num=10):
     train_dataset, _ = datasets.load_datasets(dataset_type)
@@ -765,12 +787,13 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
             except Exception as e:
                 print(f"处理 Worker {worker.idx} 数据时出错: {str(e)}")
                 continue
-        
+
         if not paras:  # 如果没有成功处理任何worker的数据
             continue
-            
+        communication_parallel(worker_list, action="get_time")  # 接受训练时间
+        
         batch_size_list, sum_time = update_B(worker_list, batch_size_list, compre_ratio_list)
-        total_time += sum_time
+        # total_time += sum_time
         total_resource += Sum(computation_resource, batch_size_list)
         total_bandwith += Sum(bandwith_resource, batch_size_list)
 
@@ -784,6 +807,7 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
 
     print("forward and back propagation")
     if samples_num != 0:
+
         train_loss /= samples_num
     train_loss /= local_steps
     print(f"一轮的训练损失(train loss): {train_loss}")

@@ -1,36 +1,610 @@
 /home/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/data1/amax/miniconda3/envs/pytorch/lib/python3.8/site-packages/torchvision/image.so: undefined symbol: _ZN3c104cuda9SetDeviceEi'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
   warn(
-接收到来自 ('127.0.0.1', 49346) 的连接
+Using CUDA device: cuda:0 -> NVIDIA RTX A6000
+sleep_time:  0.003
+接收到来自 ('127.0.0.1', 48224) 的连接
 收到服务器消息: Hello from server to worker 3
 已发送响应到服务器
 等待接收配置...
 成功接收配置
-{'model_type': 'AlexNet', 'dataset_type': 'CIFAR10', 'batch_size': 64, 'data_pattern': 4, 'lr': 0.1, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 250, 'momentum': -1, 'weight_decay': 0.0}
+{'model_type': 'AlexNet', 'dataset_type': 'CIFAR10', 'batch_size': 64, 'data_pattern': 0, 'lr': 0.1, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 10000, 'momentum': -1, 'weight_decay': 0.0}
 para num: 2251584
 Model Size: 8.589111328125 MB
-4999
+5000
 Files already downloaded and verified
 Files already downloaded and verified
 recieved local_steps from server:  1
 epoch-1 lr: 0.1
+sleep time:  0.003
 recieved batch_size from server:  32
-训练过程出错: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 47.54 GiB total capacity; 162.12 MiB already allocated; 15.12 MiB free; 166.00 MiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
-train_loss:  0.0
-train time:  0.733380324484088
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  9.023750761032105
+one_step_time:  10.59966516494751
+train_loss:  2.301086664199829
+train time:  10.600704669952393
 after aggregation, epoch: 1, train loss: 0.0, test loss: 0, test accuracy: 0
 send para
-send time:  4.491709164595431
+send time:  5.472995103821724
 get begin
-收到的数据类型错误: <class 'NoneType'>
 get end
-recieved local_steps from server:  tensor([-0.1076,  0.1916,  0.1184,  ...,  0.0057,  0.0206,  0.0165],
-       device='cuda:0')
+recieved local_steps from server:  40
 epoch-2 lr: 0.0993
-Traceback (most recent call last):
-  File "client.py", line 267, in <module>
-    main()
-  File "client.py", line 140, in main
-    train2(local_model, global_model, train_data, train_label, optimizer, optimizer2, local_steps, device, client,start_idx,train_loader)
-  File "/data0/scchen/AdaSFL/client_module/training_utils.py", line 97, in train2
-    for iter_idx in range(local_iters):
-TypeError: only integer tensors of a single element can be converted to an index
+sleep time:  0.003
+recieved batch_size from server:  15
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007595279693603516
+one_step_time:  0.9531962871551514
+recieved batch_size from server:  86
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007651069641113281
+one_step_time:  0.9817306995391846
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.00781271743774414
+one_step_time:  1.0352520942687988
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0076405792236328126
+one_step_time:  1.0386922359466553
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0076765804290771485
+one_step_time:  1.0394783020019531
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007601001739501953
+one_step_time:  1.0196003913879395
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007560708999633789
+one_step_time:  1.028646469116211
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.005798318862915039
+one_step_time:  1.0864827632904053
+recieved batch_size from server:  107
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.005320051193237305
+one_step_time:  1.165808916091919
+recieved batch_size from server:  69
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007421472549438477
+one_step_time:  1.0929360389709473
+recieved batch_size from server:  50
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.011702039718627929
+one_step_time:  1.1208305358886719
+recieved batch_size from server:  56
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007915475845336913
+one_step_time:  1.119182825088501
+recieved batch_size from server:  83
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007960298538208007
+one_step_time:  1.558988094329834
+recieved batch_size from server:  60
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007557132720947266
+one_step_time:  1.0287842750549316
+recieved batch_size from server:  62
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007709482192993164
+one_step_time:  1.1750998497009277
+recieved batch_size from server:  72
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007540681838989258
+one_step_time:  1.063969612121582
+recieved batch_size from server:  77
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007551887512207031
+one_step_time:  1.0546820163726807
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007739999771118164
+one_step_time:  1.0552337169647217
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007778146743774414
+one_step_time:  1.0641651153564453
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007336118698120117
+one_step_time:  1.054980993270874
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006594398498535156
+one_step_time:  1.0703363418579102
+recieved batch_size from server:  87
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006386974334716797
+one_step_time:  1.0553879737854004
+recieved batch_size from server:  90
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006248453140258789
+one_step_time:  1.0622386932373047
+recieved batch_size from server:  95
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006154277801513672
+one_step_time:  1.055556058883667
+recieved batch_size from server:  99
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006750801086425781
+one_step_time:  1.0494790077209473
+recieved batch_size from server:  92
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0062689571380615235
+one_step_time:  1.0520226955413818
+recieved batch_size from server:  95
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006365516662597656
+one_step_time:  1.0560524463653564
+recieved batch_size from server:  92
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006485679626464844
+one_step_time:  1.0641791820526123
+recieved batch_size from server:  91
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006279685974121094
+one_step_time:  1.050492286682129
+recieved batch_size from server:  94
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006522634506225586
+one_step_time:  1.0560047626495361
+recieved batch_size from server:  90
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006424406051635742
+one_step_time:  1.0498433113098145
+recieved batch_size from server:  94
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006489017486572266
+one_step_time:  1.0632967948913574
+recieved batch_size from server:  91
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007111528396606445
+one_step_time:  1.0516176223754883
+recieved batch_size from server:  84
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0065343170166015626
+one_step_time:  1.0583679676055908
+recieved batch_size from server:  90
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.006552675247192383
+one_step_time:  1.0544910430908203
+recieved batch_size from server:  87
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007456758499145508
+one_step_time:  1.0559487342834473
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007534244537353516
+one_step_time:  1.0514836311340332
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0075523643493652344
+one_step_time:  1.0672986507415771
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0077359466552734376
+one_step_time:  1.0697338581085205
+recieved batch_size from server:  77
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007500627517700195
+one_step_time:  1.0723888874053955
+train_loss:  2.3025579869747164
+train time:  42.908507108688354
+after aggregation, epoch: 2, train loss: 0.0, test loss: 0, test accuracy: 0
+send para
+send time:  6.672333129300188
+get begin
+get end
+recieved local_steps from server:  40
+epoch-3 lr: 0.0986049
+sleep time:  0.003
+recieved batch_size from server:  77
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007547357559204102
+one_step_time:  0.9820420742034912
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007557132720947266
+one_step_time:  1.0724163055419922
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007527568817138672
+one_step_time:  1.0559139251708984
+recieved batch_size from server:  77
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007509687423706055
+one_step_time:  1.059636116027832
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007503011703491211
+one_step_time:  1.060600757598877
+recieved batch_size from server:  76
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007546403884887695
+one_step_time:  1.0563545227050781
+recieved batch_size from server:  77
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007578351974487305
+one_step_time:  1.0590269565582275
+recieved batch_size from server:  76
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0076172142028808594
+one_step_time:  1.0567920207977295
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007277944564819336
+one_step_time:  1.0759873390197754
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007617929458618164
+one_step_time:  1.0629336833953857
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007633903503417969
+one_step_time:  1.0755620002746582
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007439592361450195
+one_step_time:  1.065720796585083
+recieved batch_size from server:  77
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007628896713256836
+one_step_time:  1.0650885105133057
+recieved batch_size from server:  76
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007574775695800781
+one_step_time:  1.0631587505340576
+recieved batch_size from server:  76
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.00825212287902832
+one_step_time:  1.0536725521087646
+recieved batch_size from server:  71
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007534721374511719
+one_step_time:  1.0996387004852295
+recieved batch_size from server:  73
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0075375823974609376
+one_step_time:  1.0572516918182373
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0074417381286621094
+one_step_time:  1.0568318367004395
+recieved batch_size from server:  65
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0073997764587402344
+one_step_time:  1.0558228492736816
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007716634750366211
+one_step_time:  1.058861494064331
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0074875144958496094
+one_step_time:  1.0423898696899414
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007513978958129883
+one_step_time:  1.040163278579712
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0074651031494140626
+one_step_time:  1.0462708473205566
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007423856735229492
+one_step_time:  1.047093152999878
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007256486892700195
+one_step_time:  1.0473711490631104
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.012586811065673827
+one_step_time:  1.048797607421875
+recieved batch_size from server:  48
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007835128784179687
+one_step_time:  1.0411572456359863
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007357099533081055
+one_step_time:  1.0402915477752686
+recieved batch_size from server:  85
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007486322402954102
+one_step_time:  1.0423295497894287
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007575490951538086
+one_step_time:  1.0565423965454102
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0077872066497802735
+one_step_time:  1.0645620822906494
+recieved batch_size from server:  76
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0075125484466552735
+one_step_time:  1.049675464630127
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007506349563598633
+one_step_time:  1.035573959350586
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007489421844482422
+one_step_time:  1.0369141101837158
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0075294761657714844
+one_step_time:  1.0434787273406982
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007559040069580078
+one_step_time:  1.0375709533691406
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007425525665283203
+one_step_time:  1.036142110824585
+recieved batch_size from server:  79
+feature num:  32768
+feature size:  0.125
+send feature and target to server
+compute_time:  0.06314299392700196
+one_step_time:  1.0985732078552246
+recieved batch_size from server:  122
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.010252454757690429
+one_step_time:  1.2867789268493652
+recieved batch_size from server:  75
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007594564437866211
+one_step_time:  1.0777814388275146
+train_loss:  2.2931287407875063
+train time:  42.418386936187744
+after aggregation, epoch: 3, train loss: 0.0, test loss: 0, test accuracy: 0
+send para
+send time:  9.059925240985883
+get begin
+get end
+recieved local_steps from server:  40
+epoch-4 lr: 0.0979146657
+sleep time:  0.003
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007699945449829102
+one_step_time:  0.9978597164154053
+recieved batch_size from server:  84
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007773139953613281
+one_step_time:  1.0497684478759766
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007737377166748047
+one_step_time:  1.0492043495178223
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0075583248138427735
+one_step_time:  1.050823450088501
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007570245742797852
+one_step_time:  1.0393962860107422
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007796743392944336
+one_step_time:  1.0427842140197754
+recieved batch_size from server:  78
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0074345855712890626
+one_step_time:  1.0424621105194092
+recieved batch_size from server:  82
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.0074708251953125
+one_step_time:  1.0429518222808838
+recieved batch_size from server:  79
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007428863525390625
+one_step_time:  1.044144630432129
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007393577575683594
+one_step_time:  1.0399019718170166
+recieved batch_size from server:  80
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007440546035766602
+one_step_time:  1.001953363418579
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server
+compute_time:  0.007462003707885742
+one_step_time:  1.0476317405700684
+recieved batch_size from server:  81
+feature num:  262144
+feature size:  1.0
+send feature and target to server

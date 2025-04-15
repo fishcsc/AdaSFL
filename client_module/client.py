@@ -44,6 +44,19 @@ else:
 #     os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 device = torch.device("cuda" if args.use_cuda and torch.cuda.is_available() else "cpu")
 
+if device.type == "cuda":
+    current_device = torch.cuda.current_device()
+    device_name = torch.cuda.get_device_name(current_device)
+    print(f"Using CUDA device: cuda:{current_device} -> {device_name}")
+else:
+    print("Using CPU")
+
+# 用于模拟训练差异，每训练一次数据sleep(0.worker_idx)秒
+worker_idx = int(args.idx)
+sleep_time = worker_idx * 0.001
+print("sleep_time: ", sleep_time)
+
+
 def main():
     client_config = ClientConfig(
         common_config=CommonConfig()
@@ -137,15 +150,16 @@ def main():
         start_time = time.time()
         optimizer = optim.SGD(local_model.parameters(), lr=epoch_lr, weight_decay=common_config.weight_decay)
         optimizer2 = optim.SGD(global_model.parameters(), lr=epoch_lr, weight_decay=common_config.weight_decay)
-        train2(local_model, global_model, train_data, train_label, optimizer, optimizer2, local_steps, device, client,start_idx,train_loader)
+        print("sleep time: ", sleep_time)
+        train2(local_model, global_model, train_data, train_label, optimizer, optimizer2, local_steps, device, client,start_idx,train_loader, sleep_time)
         train_loss = 0.0
 
-        train_time = time.time() - start_time
-        train_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
-        while train_time>10 or train_time<1:
-             train_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
-        train_time=train_time/10
-        print("train time: ", train_time)
+        train_time_local_steps = time.time() - start_time
+        # train_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
+        # while train_time>10 or train_time<1:
+        #      train_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
+        # train_time=train_time/10
+        print("train time: ", train_time_local_steps)
 
         acc,test_loss=0,0
         
@@ -159,7 +173,7 @@ def main():
              send_time = np.random.normal(loc=computation, scale=np.sqrt(dynamics))
         
         print("send time: ",send_time)
-        client.send((train_time,send_time))
+        client.send((train_time_local_steps,send_time))
         print("get begin")
         get_model_para(local_model,client)
         print("get end")

@@ -6,12 +6,21 @@
   "worker_config_list": [
     {
       "ip_address": "192.168.0.13",
+      "user_name": "edge04",
+      "pass_wd": "edge04",
+      "listen_port": 47007,
+      "master_port": 57007,
+      "computation": 5,
+      "dynamics": 4
+    },
+    {
+      "ip_address": "192.168.0.13",
       "user_name": "edge05",
       "pass_wd": "edge05",
       "listen_port": 47008,
       "master_port": 57008,
-      "computation": 5,
-      "dynamics": 4
+      "computation": 4,
+      "dynamics": 3
     },
     {
       "ip_address": "192.168.0.13",
@@ -19,8 +28,8 @@
       "pass_wd": "edge06",
       "listen_port": 47009,
       "master_port": 57009,
-      "computation": 5,
-      "dynamics": 4
+      "computation": 6,
+      "dynamics": 3
     },
     {
       "ip_address": "192.168.0.13",
@@ -28,7 +37,7 @@
       "pass_wd": "edge07",
       "listen_port": 47010,
       "master_port": 57010,
-      "computation": 5,
+      "computation": 8,
       "dynamics": 4
     }
   ]
