@@ -92,21 +92,31 @@ def train2(model, global_model, train_data, train_label, optimizer, optimizer2, 
     global_model.train()
     train_loss = 0.0
     samples_num = len(train_label)
+    sleep_tmp = sleep_time
     
     for iter_idx in range(local_iters):
         try:
             t_start = time.time()
             batch_size = client.recv()
-            
+            # batch_size = 64
             # batch_size = get_data_socket(master_socket)
             print("recieved batch_size from server: ", batch_size)
             if not isinstance(batch_size, int):
                 print(f"收到的batch_size类型错误: {type(batch_size)}")
                 continue
+
+            # base_lr = 0.0993
+            # base_bs = 64
+            # scaled_lr = base_lr * (batch_size / base_bs)
+            # for param_group in optimizer.param_groups:
+            #     param_group['lr'] = scaled_lr
+            # for param_group in optimizer2.param_groups:
+            #     param_group['lr'] = scaled_lr
                 
-            data = torch.reshape(train_data[start_idx:start_idx+batch_size, :, :], [-1, 32, 32]).to(device)
-            target = (train_label[start_idx:start_idx+batch_size]).to(device)
-            start_idx = start_idx + batch_size
+            data = train_data[start_idx:start_idx+batch_size].to(device)  # 不 reshape，直接切片
+            target = train_label[start_idx:start_idx+batch_size].to(device)
+
+            start_idx += batch_size
             if start_idx >= samples_num:
                 start_idx = 0
             
@@ -150,13 +160,17 @@ def train2(model, global_model, train_data, train_label, optimizer, optimizer2, 
             optimizer.step()
             time_backward = time.time() - time_2
 
+            print("sleep_tmp: ", sleep_tmp)
+            sleep_time = sleep_tmp * batch_size
+            print("sleep_time: ", sleep_time)
             time.sleep(sleep_time)
             compute_time = time_forward + time_backward + sleep_time
            
             print("compute_time: ", compute_time)
             one_step_time = time.time() - t_start
             print("one_step_time: ", one_step_time)
-            client.send((compute_time, 0))
+            client.send((compute_time, 0)) #TODO: CIFIR-10的实验的训练时间都是这个时间，不包含通信时间
+            # client.send((one_step_time, 0))
             
         except Exception as e:
             print(f"训练过程出错: {str(e)}")

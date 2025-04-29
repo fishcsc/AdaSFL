@@ -26,14 +26,14 @@ import pdb
 
 #init parameters
 parser = argparse.ArgumentParser(description='Distributed Client')
-parser.add_argument('--dataset_type', type=str, default='CIFAR10')
-parser.add_argument('--model_type', type=str, default='AlexNet')
+parser.add_argument('--dataset_type', type=str, default='FashionMNIST')
+parser.add_argument('--model_type', type=str, default='CNN')
 parser.add_argument('--batch_size', type=int, default=64)
-parser.add_argument('--data_pattern', type=int, default=0)
-parser.add_argument('--lr', type=float, default=0.1)
+parser.add_argument('--data_pattern', type=int, default=4)
+parser.add_argument('--lr', type=float, default=0.02)
 parser.add_argument('--decay_rate', type=float, default=0.993)
 parser.add_argument('--min_lr', type=float, default=0.005)
-parser.add_argument('--epoch', type=int, default=10000) # set to 10000 for splite_sfl
+parser.add_argument('--epoch', type=int, default=1000) # set to 10000 for splite_sfl
 parser.add_argument('--momentum', type=float, default=-1)
 parser.add_argument('--weight_decay', type=float, default=0.0)
 parser.add_argument('--use_cuda', action="store_false", default=True)
@@ -69,6 +69,7 @@ def main():
     client_model,global_model = models.create_model_instance(common_config.dataset_type, common_config.model_type)
     init_para = torch.nn.utils.parameters_to_vector(client_model.parameters())
     global_model.to(device)
+    client_model = client_model.to(device)
 
     common_config.para_nums=init_para.nelement()
     model_size = init_para.nelement() * 4 / 1024 / 1024
@@ -103,7 +104,7 @@ def main():
     #到了这里，worker已经启动了
 
     # Create model instance
-    train_data_partition = partition_data(common_config.dataset_type, common_config.data_pattern)
+    train_data_partition = partition_data(common_config.dataset_type, common_config.data_pattern, worker_num)
 
     for worker_idx, worker in enumerate(worker_list):
         worker.config.para = init_para
@@ -147,11 +148,18 @@ def main():
     epoch_lr = args.lr
     for epoch_idx in range(1, 1+common_config.epoch):
 
+        start_time = time.time()
         communication_parallel(worker_list, action="send_local_steps", data=local_steps)
         print("epoch {} send local steps ({}) to workers done".format(epoch_idx, local_steps))
+        warmup_epochs = 10
+        base_lr = common_config.lr
 
-        if epoch_idx > 1 and epoch_idx % 1 == 0:
-            epoch_lr = max((args.decay_rate * args.lr, args.min_lr))
+
+        if epoch_idx <= warmup_epochs:
+            epoch_lr = base_lr * epoch_idx / warmup_epochs
+        else:
+            decay_epoch = epoch_idx - warmup_epochs
+            epoch_lr = max(base_lr * (args.decay_rate ** decay_epoch), args.min_lr)
         optimizer = optim.SGD(global_model.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
         total_resource,total_bandwith,total_time=train2(global_model, device, worker_list,epoch_lr, local_steps,total_resource,total_bandwith,total_time)
 
@@ -163,6 +171,7 @@ def main():
         
         para_delta = aggregate_model_para2(client_model, worker_list, device)
         # global_para = aggregate_compressed_model(global_model,worker_list)
+        
         print("send begin")
         communication_parallel(worker_list, action="send_model",data=para_delta)
         print("send end")
@@ -173,7 +182,9 @@ def main():
         print("Epoch: {}, accuracy: {}, test_loss: {}\n".format(epoch_idx, acc, test_loss))
 
         local_steps,sum_time=update_E(worker_list)
-        total_time+=sum_time
+        # total_time+=sum_time 
+        end_time = time.time()
+        total_time += end_time-start_time
         # print("total_time:", total_time)
         # print("sum_time:",sum_time)
         total_resource=total_resource+Sum(computation_resource,local_steps_list)
@@ -212,8 +223,8 @@ def update_E(worker_list):
     '''重点是更新local_steps
     
     '''
-    local_steps = 40
-    # local_steps = 1 # splite_sfl
+    # local_steps = 40
+    local_steps = 1 # splite_sfl
     compre_ratio = local_steps / 200.0
     train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
     send_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
@@ -277,7 +288,7 @@ def update_B(worker_list, batch_size_list, compre_ratio_list):
         - batch_size_list: 更新后的批次大小配置列表
         - total_time: 计算得出的预估总训练时间
     """
-    batch = 128
+    batch = 64
     compre_ratio = batch / 200.0
     train_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
     send_time_list = [0.8, 0.7, 0.8, 0.6, 0.8, 0.7, 0.6, 0.8, 0.7, 0.6]
@@ -549,57 +560,91 @@ def non_iid_partition_multi(ratio, train_class_num, worker_num, prefer_worker_nu
     return partition_sizes
 
 
+# def partition_data(dataset_type, data_pattern, worker_num=10):
+#     train_dataset, _ = datasets.load_datasets(dataset_type)
+
+#     if dataset_type == "CIFAR10" or dataset_type == "FashionMNIST" or dataset_type == "MNIST":
+#         train_class_num=10
+#         if data_pattern == 0:
+#             partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
+#         elif data_pattern == 1:
+#             non_iid_ratio = 0.2
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 2:
+#             non_iid_ratio = 0.4
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 3:
+#             non_iid_ratio = 0.6
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 4:
+#             non_iid_ratio = 0.8
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#     elif dataset_type == "EMNIST":
+#         train_class_num=62
+#         if data_pattern == 0:
+#             partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
+#         elif data_pattern == 1:
+#             non_iid_ratio = 0.2
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 2:
+#             non_iid_ratio = 0.4
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 3:
+#             non_iid_ratio = 0.6
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 4:
+#             non_iid_ratio = 0.8
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#     if dataset_type == "CIFAR100" or dataset_type == "image100":
+#         train_class_num=100
+#         if data_pattern == 0:
+#             partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
+#         elif data_pattern == 1:
+#             non_iid_ratio = 0.2
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 2:
+#             non_iid_ratio = 0.4
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 3:
+#             non_iid_ratio = 0.6
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#         elif data_pattern == 4:
+#             non_iid_ratio = 0.8
+#             partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+#     train_data_partition = datasets.LabelwisePartitioner(train_dataset, partition_sizes=partition_sizes)
+#     return train_data_partition
+
 def partition_data(dataset_type, data_pattern, worker_num=10):
     train_dataset, _ = datasets.load_datasets(dataset_type)
 
-    if dataset_type == "CIFAR10" or dataset_type == "FashionMNIST":
-        train_class_num=10
-        if data_pattern == 0:
-            partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
-        elif data_pattern == 1:
-            non_iid_ratio = 0.2
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 2:
-            non_iid_ratio = 0.4
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 3:
-            non_iid_ratio = 0.6
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 4:
-            non_iid_ratio = 0.8
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+    if dataset_type in ["CIFAR10", "FashionMNIST", "MNIST"]:
+        train_class_num = 10
     elif dataset_type == "EMNIST":
-        train_class_num=62
-        if data_pattern == 0:
-            partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
-        elif data_pattern == 1:
-            non_iid_ratio = 0.2
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 2:
-            non_iid_ratio = 0.4
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 3:
-            non_iid_ratio = 0.6
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 4:
-            non_iid_ratio = 0.8
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-    if dataset_type == "CIFAR100" or dataset_type == "image100":
-        train_class_num=100
-        if data_pattern == 0:
-            partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
-        elif data_pattern == 1:
-            non_iid_ratio = 0.2
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 2:
-            non_iid_ratio = 0.4
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 3:
-            non_iid_ratio = 0.6
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
-        elif data_pattern == 4:
-            non_iid_ratio = 0.8
-            partition_sizes = non_iid_partition(non_iid_ratio,train_class_num,worker_num)
+        train_class_num = 62
+    elif dataset_type in ["CIFAR100", "image100"]:
+        train_class_num = 100
+    elif dataset_type == "tinyImageNet":
+        train_class_num = 200
+    else:
+        raise ValueError(f"Unsupported dataset_type: {dataset_type}")
+
+    if data_pattern == 0:
+        partition_sizes = np.ones((train_class_num, worker_num)) * (1.0 / worker_num)
+    elif data_pattern == 1:
+        non_iid_ratio = 0.2
+        partition_sizes = non_iid_partition(non_iid_ratio, train_class_num, worker_num)
+    elif data_pattern == 2:
+        non_iid_ratio = 0.4
+        partition_sizes = non_iid_partition(non_iid_ratio, train_class_num, worker_num)
+    elif data_pattern == 3:
+        non_iid_ratio = 0.6
+        partition_sizes = non_iid_partition(non_iid_ratio, train_class_num, worker_num)
+    elif data_pattern == 4:
+        non_iid_ratio = 0.8
+        partition_sizes = non_iid_partition(non_iid_ratio, train_class_num, worker_num)
+    else:
+        raise ValueError(f"Unsupported data_pattern: {data_pattern}")
+
     train_data_partition = datasets.LabelwisePartitioner(train_dataset, partition_sizes=partition_sizes)
     return train_data_partition
 
@@ -643,7 +688,7 @@ def partition_data11(dataset_type, data_pattern, worker_num=10):
                 if partition_sizes[i][j] == 1:
                     partition_sizes[i][j] = 1/axis[i]
 
-    elif dataset_type == "CIFAR10" or dataset_type == "FashionMNIST":
+    elif dataset_type == "CIFAR10" or dataset_type == "FashionMNIST" or dataset_type == "MNIST":
         test_partition_sizes = np.ones((10, worker_num)) * (1 / worker_num)
         if data_pattern == 0:
             partition_sizes = np.ones((10, worker_num)) * (1.0 / worker_num)
@@ -731,6 +776,7 @@ def get_data_feature(worker):
         print(f"❌ Failed to receive data for {worker.user_name}: {str(e)}")
         worker.config.neighbor_paras = None  # 显式赋值 None
 
+#ada1, 每个worker都有一个model2,最后再聚合（平均）TODO: 按照论文修改聚合方式，不是简单的平均
 def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, total_bandwith, total_time):
     # model1,model2 = models.create_model_instance()
 
@@ -813,6 +859,371 @@ def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, to
     print(f"一轮的训练损失(train loss): {train_loss}")
     
     return total_resource, total_bandwith, total_time
+
+
+#ada2：在一轮中worker共享一个model2,model2一直伴随着不同的worker在更新 TODO: 如果模型是non-iid,model2更新会不会东一下西一下的
+# def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, total_bandwith, total_time):
+#     batch_size_list = [50] * 10
+#     compre_ratio_list = [1] * 10
+#     computation_resource = [3, 1, 6, 7, 7, 5, 5, 2, 6, 2]
+#     bandwith_resource = [5, 6, 8, 1, 5, 8, 2, 4, 4, 2]
+
+#     loss_func = nn.CrossEntropyLoss()
+#     train_loss = 0.0
+#     samples_num = 0
+
+#     for iter_idx in range(local_steps):
+#         communication_parallel(worker_list, action="send_batch_size")  # 通知 batch size
+#         origin_para = torch.nn.utils.parameters_to_vector(model.parameters()).detach()  # 保存模型参数
+#         communication_parallel(worker_list, action="get_data_feature")  # 获取 features
+
+#         grad_dict = {}
+
+#         model1, model2 = models.create_model_instance("a", "b")
+#         model2.to(device)
+#         torch.nn.utils.vector_to_parameters(origin_para, model2.parameters())
+#         optimizer = optim.SGD(model2.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
+
+#         for worker in worker_list:
+#             # 跳过无效 worker
+#             if worker.config.neighbor_paras is None:
+#                 print(f"⚠️ Worker {worker.idx} 接收数据为空，跳过处理")
+#                 continue
+#             if not isinstance(worker.config.neighbor_paras, tuple):
+#                 print(f"⚠️ Worker {worker.idx} 数据类型错误，期望 tuple，实际收到 {type(worker.config.neighbor_paras)}")
+#                 continue
+#             if len(worker.config.neighbor_paras) != 2:
+#                 print(f"⚠️ Worker {worker.idx} 数据长度不符，期望2个元素，实际收到 {len(worker.config.neighbor_paras)}")
+#                 continue
+
+#             data_feature, target = worker.config.neighbor_paras
+#             data_feature = data_feature.detach().requires_grad_().to(device)
+#             target = target.to(device)
+
+#             optimizer.zero_grad()
+#             output = model2(data_feature)
+#             loss = loss_func(output, target)
+#             loss.backward()
+#             optimizer.step()
+#             train_loss += loss.item()
+#             samples_num += target.size(0)
+
+#             grad_dict[worker.idx] = data_feature.grad.cpu()
+
+#         # 发送梯度回客户端
+#         for worker in worker_list:
+#             if worker.idx in grad_dict:
+#                 worker.client.send(grad_dict[worker.idx])
+
+#         communication_parallel(worker_list, action="get_time")  # 获取时间
+#         batch_size_list, sum_time = update_B(worker_list, batch_size_list, compre_ratio_list)
+#         total_resource += Sum(computation_resource, batch_size_list)
+#         total_bandwith += Sum(bandwith_resource, batch_size_list)
+
+#         # 参数更新
+#         new_para = torch.nn.utils.parameters_to_vector(model2.parameters()).detach()
+#         torch.nn.utils.vector_to_parameters(new_para, model.parameters())
+
+#     print("forward and back propagation")
+#     if samples_num != 0:
+#         train_loss /= samples_num
+#     train_loss /= local_steps
+#     print(f"一轮的训练损失(train loss): {train_loss:.4f}")
+
+#     return total_resource, total_bandwith, total_time
+
+
+#merge
+# def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, total_bandwith, total_time):
+#     # model1,model2 = models.create_model_instance()
+
+#     batch_size_list=[50,50,50,50,50,50,50,50,50,50]
+#     compre_ratio_list=[1,1,1,1,1,1,1,1,1,1]
+#     computation_resource=[3,1,6,7,7,5,5,2,6,2]
+#     bandwith_resource=[5,6,8,1,5,8,2,4,4,2]
+#     train_loss = 0.0
+#     samples_num = 0
+#     loss_func = nn.CrossEntropyLoss() 
+#     for iter_idx in range(local_steps):
+#         communication_parallel(worker_list, action="send_batch_size")  # 发送batch_size给workers
+#         origin_para = torch.nn.utils.parameters_to_vector(model.parameters()).detach()      # 保存原来的参数
+#         communication_parallel(worker_list, action="get_data_feature")
+#         paras = []
+#         all_features = []
+#         all_targets = []
+#         sum_batch = 0
+#         for worker in worker_list:
+#             if worker.config.neighbor_paras is None:
+#                 print(f"⚠️ Worker {worker.idx} 接收数据为空，跳过处理")
+#                 continue
+                
+#             # 检查2: 数据类型错误的情况
+#             if not isinstance(worker.config.neighbor_paras, tuple):
+#                 print(f"⚠️ Worker {worker.idx} 数据类型错误，期望tuple，实际收到{type(worker.config.neighbor_paras)}")
+#                 continue
+                
+#             # 检查3: 数据长度不符的情况
+#             if len(worker.config.neighbor_paras) != 2:
+#                 print(f"⚠️ Worker {worker.idx} 数据长度不符，期望2个元素，实际收到{len(worker.config.neighbor_paras)}")
+#                 continue
+#             data_feature, target = worker.config.neighbor_paras
+#             all_features.append(data_feature)
+#             all_targets.append(target)
+#             sum_batch += worker.config.batch_size
+            
+#         model1, model2 = models.create_model_instance("a", "b")
+#         model2.to(device)
+#         torch.nn.utils.vector_to_parameters(origin_para, model2.parameters())
+#         optimizer = optim.SGD(model2.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
+        
+#         fused_features = torch.cat(all_features, dim=0).to(device)
+#         fused_targets = torch.cat(all_targets, dim=0).to(device)
+        
+#         input = fused_features.detach().requires_grad_()
+#         optimizer.zero_grad()
+#         output1 = model2(input)
+#         loss = loss_func(output1, fused_targets)
+#         loss.backward()
+#         optimizer.step()
+#         train_loss += loss.item()
+            
+#         grad_dict = {}
+#         with torch.no_grad():
+#             fused_grad = input.grad 
+#             ptr = 0  # 梯度分割指针
+#             # tmp = ""
+#             for i, worker in enumerate(worker_list):
+#                 original_size = all_features[i].size(0)
+#                 # tmp += str(original_size) + " "
+#                 worker_grad = fused_grad[ptr:ptr + original_size]
+#                 grad_dict[worker.idx] = worker_grad.cpu()  # 保存到字典
+#                 ptr += original_size
+#         # print(tmp)
+#         for worker in worker_list:
+#             if worker.idx in grad_dict:
+#                 worker.client.send(grad_dict[worker.idx])
+#         # if not paras:  # 如果没有成功处理任何worker的数据
+#         #     continue
+#         communication_parallel(worker_list, action="get_time")  # 接受训练时间
+        
+#         batch_size_list, sum_time = update_B(worker_list, batch_size_list, compre_ratio_list)
+#         total_resource += Sum(computation_resource, batch_size_list)
+#         total_bandwith += Sum(bandwith_resource, batch_size_list)
+
+#         new_para = torch.nn.utils.parameters_to_vector(model2.parameters()).detach()
+#         torch.nn.utils.vector_to_parameters(new_para, model.parameters())
+
+
+#     print("forward and back propagation")
+#     if samples_num != 0:
+
+#         train_loss /= samples_num
+#     train_loss /= local_steps
+#     print(f"一轮的训练损失(train loss): {train_loss}")
+    
+#     return total_resource, total_bandwith, total_time
+
+
+# merge2: 切分成小batch
+# def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, total_bandwith, total_time):
+#     batch_size_list = [50] * 10
+#     compre_ratio_list = [1] * 10
+#     computation_resource = [3,1,6,7,7,5,5,2,6,2]
+#     bandwith_resource = [5,6,8,1,5,8,2,4,4,2]
+#     train_loss = 0.0
+#     loss_func = nn.CrossEntropyLoss()
+
+#     for iter_idx in range(local_steps):
+#         communication_parallel(worker_list, action="send_batch_size")
+#         origin_para = torch.nn.utils.parameters_to_vector(model.parameters()).detach()
+#         communication_parallel(worker_list, action="get_data_feature")
+
+#         all_features = []
+#         all_targets = []
+#         sum_batch = 0
+
+#         for worker in worker_list:
+#             if worker.config.neighbor_paras is None:
+#                 print(f"⚠️ Worker {worker.idx} 接收数据为空，跳过处理")
+#                 continue
+#             if not isinstance(worker.config.neighbor_paras, tuple):
+#                 print(f"⚠️ Worker {worker.idx} 数据类型错误，期望tuple，实际收到{type(worker.config.neighbor_paras)}")
+#                 continue
+#             if len(worker.config.neighbor_paras) != 2:
+#                 print(f"⚠️ Worker {worker.idx} 数据长度不符，期望2个元素，实际收到{len(worker.config.neighbor_paras)}")
+#                 continue
+
+#             data_feature, target = worker.config.neighbor_paras
+#             all_features.append(data_feature)
+#             all_targets.append(target)
+#             sum_batch += worker.config.batch_size
+
+#         if not all_features:
+#             print("⚠️ 所有 worker 数据为空，本轮跳过")
+#             continue
+
+#         model1, model2 = models.create_model_instance("a", "b")
+#         model2.to(device)
+#         torch.nn.utils.vector_to_parameters(origin_para, model2.parameters())
+#         optimizer = optim.SGD(model2.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
+
+#         fused_features = torch.cat(all_features, dim=0).to(device)
+#         fused_targets = torch.cat(all_targets, dim=0).to(device)
+
+#         input = fused_features.detach().requires_grad_()
+#         input_chunks = torch.chunk(input, 4, dim=0)
+#         target_chunks = torch.chunk(fused_targets, 4, dim=0)
+
+#         optimizer.zero_grad()
+#         loss_total = 0.0
+#         grads_list = []
+
+#         for x_chunk, y_chunk in zip(input_chunks, target_chunks):
+#             x_chunk = x_chunk.detach().requires_grad_()
+#             output = model2(x_chunk)
+#             loss = loss_func(output, y_chunk)
+#             loss.backward()
+#             loss_total += loss.item()
+#             grads_list.append(x_chunk.grad.detach())
+
+#         optimizer.step()
+#         train_loss += loss_total / len(input_chunks)
+
+#         with torch.no_grad():
+#             fused_grad = torch.cat(grads_list, dim=0)
+#             grad_dict = {}
+#             ptr = 0
+#             for i, worker in enumerate(worker_list):
+#                 original_size = all_features[i].size(0)
+#                 worker_grad = fused_grad[ptr:ptr + original_size]
+#                 grad_dict[worker.idx] = worker_grad.cpu()
+#                 ptr += original_size
+
+#         for worker in worker_list:
+#             if worker.idx in grad_dict:
+#                 worker.client.send(grad_dict[worker.idx])
+
+#         communication_parallel(worker_list, action="get_time")
+#         batch_size_list, sum_time = update_B(worker_list, batch_size_list, compre_ratio_list)
+#         total_resource += Sum(computation_resource, batch_size_list)
+#         total_bandwith += Sum(bandwith_resource, batch_size_list)
+
+#         new_para = torch.nn.utils.parameters_to_vector(model2.parameters()).detach()
+#         torch.nn.utils.vector_to_parameters(new_para, model.parameters())
+
+#     train_loss /= local_steps
+#     print(f"一轮的训练损失(train loss): {train_loss}")
+#     return total_resource, total_bandwith, total_time
+
+# merge3: 顺序打乱
+# def train2(model, device, worker_list, epoch_lr, local_steps, total_resource, total_bandwith, total_time):
+#     batch_size_list = [50] * 10
+#     compre_ratio_list = [1] * 10
+#     computation_resource = [3,1,6,7,7,5,5,2,6,2]
+#     bandwith_resource = [5,6,8,1,5,8,2,4,4,2]
+#     train_loss = 0.0
+#     loss_func = nn.CrossEntropyLoss()
+
+#     for iter_idx in range(local_steps):
+#         communication_parallel(worker_list, action="send_batch_size")
+#         origin_para = torch.nn.utils.parameters_to_vector(model.parameters()).detach()
+#         communication_parallel(worker_list, action="get_data_feature")
+
+#         all_features = []
+#         all_targets = []
+#         sum_batch = 0
+#         worker_info = []
+
+#         # 收集所有worker的数据并记录它们的原始索引
+#         for worker in worker_list:
+#             if worker.config.neighbor_paras is None:
+#                 print(f"⚠️ Worker {worker.idx} 接收数据为空，跳过处理")
+#                 continue
+#             if not isinstance(worker.config.neighbor_paras, tuple):
+#                 print(f"⚠️ Worker {worker.idx} 数据类型错误，期望tuple，实际收到{type(worker.config.neighbor_paras)}")
+#                 continue
+#             if len(worker.config.neighbor_paras) != 2:
+#                 print(f"⚠️ Worker {worker.idx} 数据长度不符，期望2个元素，实际收到{len(worker.config.neighbor_paras)}")
+#                 continue
+
+#             data_feature, target = worker.config.neighbor_paras
+#             all_features.append(data_feature)
+#             all_targets.append(target)
+#             worker_info.append((worker.idx, len(data_feature)))  # 保存每个worker的数据大小
+#             sum_batch += worker.config.batch_size
+
+#         if not all_features:
+#             print("⚠️ 所有 worker 数据为空，本轮跳过")
+#             continue
+
+#         model1, model2 = models.create_model_instance("a", "b")
+#         model2.to(device)
+#         torch.nn.utils.vector_to_parameters(origin_para, model2.parameters())
+#         optimizer = optim.SGD(model2.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
+
+#         # 打乱数据：首先拼接所有特征和目标
+#         fused_features = torch.cat(all_features, dim=0).to(device)
+#         fused_targets = torch.cat(all_targets, dim=0).to(device)
+
+#         # 随机打乱数据
+#         perm = torch.randperm(fused_features.size(0))
+#         fused_features = fused_features[perm]
+#         fused_targets = fused_targets[perm]
+
+#         # 对每个worker的数据进行分块：需要记录每个worker的数据在打乱后的位置
+#         input = fused_features.detach().requires_grad_()
+#         input_chunks = torch.chunk(input, 4, dim=0)
+#         target_chunks = torch.chunk(fused_targets, 4, dim=0)
+
+#         optimizer.zero_grad()
+#         loss_total = 0.0
+#         grads_list = []
+
+#         for x_chunk, y_chunk in zip(input_chunks, target_chunks):
+#             x_chunk = x_chunk.detach().requires_grad_()
+#             output = model2(x_chunk)
+#             loss = loss_func(output, y_chunk)
+#             loss.backward()
+#             loss_total += loss.item()
+#             grads_list.append(x_chunk.grad.detach())
+
+#         optimizer.step()
+#         train_loss += loss_total / len(input_chunks)
+
+#         with torch.no_grad():
+#             fused_grad = torch.cat(grads_list, dim=0)
+
+#             # 恢复梯度的原始顺序
+#             grad_unshuffled = torch.zeros_like(fused_grad)  # 创建空 tensor 来还原梯度顺序
+#             grad_unshuffled[perm] = fused_grad  # 恢复打乱前的梯度顺序
+
+#             grad_dict = {}
+#             ptr = 0
+
+#             # 将每个worker的梯度根据原始数据顺序重新分配
+#             for idx, size in worker_info:
+#                 worker_grad = grad_unshuffled[ptr:ptr + size]
+#                 grad_dict[idx] = worker_grad.cpu()
+#                 ptr += size
+
+#         # 发送回每个worker的梯度
+#         for worker in worker_list:
+#             if worker.idx in grad_dict:
+#                 worker.client.send(grad_dict[worker.idx])
+
+#         communication_parallel(worker_list, action="get_time")
+#         batch_size_list, sum_time = update_B(worker_list, batch_size_list, compre_ratio_list)
+#         total_resource += Sum(computation_resource, batch_size_list)
+#         total_bandwith += Sum(bandwith_resource, batch_size_list)
+
+#         # 更新全局模型参数
+#         new_para = torch.nn.utils.parameters_to_vector(model2.parameters()).detach()
+#         torch.nn.utils.vector_to_parameters(new_para, model.parameters())
+
+#     train_loss /= local_steps
+#     print(f"一轮的训练损失sssssss(train loss): {train_loss}")
+#     return total_resource, total_bandwith, total_time
+
 
 def aggregate_model_para2(client_model, worker_list, device):
     global_para = torch.nn.utils.parameters_to_vector(client_model.parameters()).detach()

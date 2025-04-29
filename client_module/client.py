@@ -53,7 +53,7 @@ else:
 
 # 用于模拟训练差异，每训练一次数据sleep(0.worker_idx)秒
 worker_idx = int(args.idx)
-sleep_time = worker_idx * 0.001
+sleep_time = (worker_idx+1) * 0.001
 print("sleep_time: ", sleep_time)
 
 
@@ -102,6 +102,7 @@ def main():
     common_config.model_type = client_config.common_config.model_type
     common_config.dataset_type = client_config.common_config.dataset_type
     common_config.batch_size = client_config.common_config.batch_size
+    print("batch_size1111: ", client_config.common_config.batch_size)
     # common_config.batch_size = 1
     common_config.data_pattern=client_config.common_config.data_pattern
     common_config.lr = client_config.common_config.lr
@@ -140,8 +141,13 @@ def main():
         local_steps=client.recv()
         print("recieved local_steps from server: ", local_steps)
 
-        if epoch > 1 and epoch % 1 == 0:
-            epoch_lr = max((common_config.decay_rate * epoch_lr, common_config.min_lr))
+        warmup_epochs = 10
+        base_lr = common_config.lr
+
+        if epoch <= warmup_epochs:
+            epoch_lr = base_lr * epoch / warmup_epochs
+        else:
+            epoch_lr = max(common_config.decay_rate * epoch_lr, common_config.min_lr)
         print("epoch-{} lr: {}".format(epoch, epoch_lr))
         # print("local steps: ", local_steps)
         # print("Compression Ratio: ", compre_ratio)
@@ -272,10 +278,21 @@ def compress_gradient_top(local_para, old_para, memory_para,ratio):
 
 def load_dataset(dataset):
     num_samples = len(dataset)
-    indices = [i for i in range(num_samples)]
-    random.shuffle(indices)
-    tx2_data, tx2_label = zip(*([dataset[i] for i in range(num_samples)]))
-    return torch.cat(tx2_data, 0), torch.tensor(tx2_label)
+    indices = list(range(num_samples))
+    random.shuffle(indices)  # 正确打乱顺序
+
+    # 按打乱后的索引取样本
+    data_list = []
+    label_list = []
+    for i in indices:
+        data, label = dataset[i]
+        data_list.append(data.unsqueeze(0))  # 增加 batch 维度
+        label_list.append(label)
+
+    # 拼接成一个 batch
+    tx2_data = torch.cat(data_list, dim=0)  # [num_samples, C, H, W]
+    tx2_label = torch.tensor(label_list)    # [num_samples]
+    return tx2_data, tx2_label
 
 if __name__ == '__main__':
     main()

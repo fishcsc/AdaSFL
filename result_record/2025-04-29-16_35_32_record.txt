@@ -1,0 +1,5 @@
+{'model_type': 'CNN', 'dataset_type': 'FashionMNIST', 'batch_size': 64, 'data_pattern': 4, 'lr': 0.02, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 250, 'momentum': -1, 'weight_decay': 0.0, 'para_nums': 52096}
+
+epoch_idx, total_time, total_bandwith, total_resource, acc, test_loss
+1 1.47 45.00 2200.00 0.1000 4.1271
+2 2.13 90.00 4400.00 0.1000 4.1271

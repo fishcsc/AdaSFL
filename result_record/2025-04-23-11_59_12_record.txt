@@ -1,0 +1,5 @@
+{'model_type': 'CNN', 'dataset_type': 'tinyImageNet', 'batch_size': 64, 'data_pattern': 0, 'lr': 0.01, 'decay_rate': 0.0001, 'min_lr': 0.005, 'epoch': 250, 'momentum': 0.09, 'weight_decay': 0.0, 'para_nums': 14723136}
+
+epoch_idx, total_time, total_bandwith, total_resource, acc, test_loss
+1 6.97 2325.00 4359.00 0.0058 5.2103
+2 32.86 81999.00 80492.00 0.0002 5.3841

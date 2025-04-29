@@ -1,0 +1,7 @@
+{'model_type': 'VGG', 'dataset_type': 'image100', 'batch_size': 64, 'data_pattern': 0, 'lr': 0.1, 'decay_rate': 0.993, 'min_lr': 0.005, 'epoch': 250, 'momentum': -1, 'weight_decay': 0.0, 'para_nums': 14723136}
+
+epoch_idx, total_time, total_bandwith, total_resource, acc, test_loss
+1 36.25 3855.00 5726.00 0.0102 4.6053
+2 156.72 156300.00 148966.00 0.0114 4.6034
+3 279.36 308745.00 292206.00 0.0112 4.5976
+4 2115.98 457380.00 431920.00 0.0100 4.6052

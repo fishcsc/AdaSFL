@@ -1,0 +1,5 @@
+{'model_type': 'ResNet', 'dataset_type': 'tinyImageNet', 'batch_size': 64, 'data_pattern': 0, 'lr': 0.05, 'decay_rate': 0.993, 'min_lr': 0.0001, 'epoch': 250, 'momentum': 0.09, 'weight_decay': 0.0005, 'para_nums': 11168832}
+
+epoch_idx, total_time, total_bandwith, total_resource, acc, test_loss
+1 2.77 2502.00 4550.00 0.0000 5.2299
+2 20.55 82250.00 80928.00 0.0009 5.2563

@@ -143,12 +143,12 @@ def load_datasets(dataset_type, data_path="/data0/scchen/data"):
         test_dataset = datasets.EMNIST(data_path, split = 'byclass', train = False, transform=train_transform)
 
     elif dataset_type == 'tinyImageNet':
-        train_dataset = datasets.ImageFolder('/data1/ymliao/data/tiny-imagenet-200/train', transform = train_transform)
-        test_dataset = datasets.ImageFolder('/data1/ymliao/data/tiny-imagenet-200/val', transform = train_transform)
+        train_dataset = datasets.ImageFolder('/data0/scchen/data/tiny-imagenet-200/train', transform = train_transform)
+        test_dataset = datasets.ImageFolder('/data0/scchen/data/tiny-imagenet-200/val', transform = train_transform)
 
     elif dataset_type == 'image100':
-        train_dataset = datasets.ImageFolder('/data1/ymliao/data/IMAGE100/train', transform = train_transform)
-        test_dataset = datasets.ImageFolder('/data1/ymliao/data/IMAGE100/test', transform = train_transform)
+        train_dataset = datasets.ImageFolder('/data0/scchen/data/image100/train', transform = train_transform)
+        test_dataset = datasets.ImageFolder('/data0/scchen/data/image100/val', transform = train_transform)
 
     return train_dataset, test_dataset
 
